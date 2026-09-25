@@ -7,7 +7,7 @@
   - 地图能解析：27 列 × 27 行 = 729 格（正方形），每行格数一致；
   - 行列 ↔ 轴向坐标能来回换算，而且 729 格一一对应（不撞车）；
   - 河**连成一条**、并且**真的挡住南北**（不走渡口过不去）；
-  - 渡口**成对**：两岸各一格、中间隔一格河水，一共 2 对（西侧、中间）；
+  - 渡口**成对**：两岸各一格、中间隔一格河水，一共 3 对（西侧、中间、东侧）；
   - 关键地形与胜利点：村庄 7 格、胜利点 1 格且在最南端。
 
 模块脚本走的是脚本端口（和引擎加载模块是同一条路），不 import 模块内部。
@@ -23,9 +23,10 @@ GRID_SCRIPTS = ("hex_math.py", "hex_text_map.py", "hex_canvas.py")
 GRID_FOLDER = REPO_ROOT / "modules" / "pack_hex_grid" / "scripts"
 MAP_FILE = REPO_ROOT / "mods" / "demo_river" / "maps" / "luo_chuan.txt"
 
-# v2 的两处渡口（北岸格、河水格、南岸格）：西侧与中间。
+# v2 的三处渡口（北岸格、河水格、南岸格）：西侧、中间、东侧。
 EXPECTED_FORDS = [((7, 4), (8, 4), (9, 4)),
-                  ((8, 13), (9, 13), (10, 13))]
+                  ((8, 13), (9, 13), (10, 13)),
+                  ((8, 22), (9, 22), (10, 22))]
 
 
 def grid_function(name: str):
@@ -54,11 +55,11 @@ class TestRiverMap(unittest.TestCase):
         counts = {}
         for code in self.cells.values():
             counts[code] = counts.get(code, 0) + 1
-        self.assertEqual(counts.get("r"), 52)     # 河
-        self.assertEqual(counts.get("f"), 4)      # 2 对渡口
+        self.assertEqual(counts.get("r"), 51)     # 河
+        self.assertEqual(counts.get("f"), 6)      # 3 对渡口
         self.assertEqual(counts.get("v"), 7)      # 村庄（不含胜利点）
         self.assertEqual(counts.get("V"), 1)      # 胜利点
-        self.assertEqual(counts.get("h"), 14)     # 丘陵
+        self.assertEqual(counts.get("h"), 23)     # 丘陵（作者加了一道南部丘陵带）
         self.assertEqual(sum(counts.values()), 729)
 
     def test_offset_to_axial_is_one_to_one(self):

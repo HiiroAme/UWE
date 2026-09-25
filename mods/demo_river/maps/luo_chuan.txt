@@ -2,7 +2,7 @@
 #
 # 尺寸：27 列 × 27 行 = 729 格（正方形；错行六边形：奇数行向右错半格，缩进只为好看）
 # 码表：p 平原   h 丘陵   r 河流（不可进入）   f 渡口   v 村庄   V 胜利点（村庄 + 胜利点）
-# 渡口：成对——两岸各一格、中间隔一格河水；渡河消耗 = 平原的 3 倍（本版保留西侧与中间两处）
+# 渡口：成对——两岸各一格、中间隔一格河水；渡河消耗 = 平原的 3 倍（西侧、中间、东侧三处）
 # 布局：河约在全图 1/3 高处；攻方在西北角；柳浦村散在南端中部；胜利点在最南端
 p p p p p p p p p p h p p p p p p p p p p p p p p p p
  p p p p p p p p p p p p p p p h p p p p p p p p p p p
@@ -12,9 +12,9 @@ p p p p p p p p p p p p p p p p p p p p p p p p p p p
  p p p p p p p p p p p p h p p p p p p p p p p p p p p
 p p p p p p p p p p p p p p p p p h p p p p p p p p p
  p p p p f p p p p p p p p p p p p p p p p p p h p p p
-r r r r r r r p p p p p p f r r r r r r r p p p p p p
+r r r r r r r p p p p p p f r r r r r r r p f p p p p
  r r r r f r r r r r r r r r r r r r r r r r r r r r r
-p p p p p p p r r r r r r f p p p p p p p r r r r r r
+p p p p p p p r r r r r r f p p p p p p p r f r r r r
  p p p p p p p p p p p p p p p p p p p p p p p p p p p
 p p p h p p p p p p p p p p p p p p p p p p p p p p p
  p p p p p p p p p p p p p p p p p p p p p p p p p p p
@@ -22,12 +22,12 @@ p p p p p p p p p p p p p p p p p p p p h p p p p p p
  p p p p p p p p p p p p p p p p p p p p p p p p p p p
 p p p p p p h p p p p p p p p p p p p p p p p p p p p
  p p p p p p p p p p p p p p p p p p p p p p p p p p p
-p p p p p p p p p p p p p p p h p p p p p p p p p p p
- p p p p p p p p p p p p p p p p p p p p p h p p p p p
+p p p p p p p p h p p h p p p h p p p p p p p p p p p
+ p p p p p p h p h p p p p p p p p p h p p h p p p p p
 p p p p p p p p p p p p p p p p p p p p p p p p p p p
  p p p p h p p p p p p v p p p p p p p p p p p p p p p
-p p p p p p p p p p p p p p v p p p p p p p p p p p p
- p p p p p p p p p p v p p p p p p p p p p p p p h p p
+p p p p h p p p p p p p p p v p p p p p p p p p p p p
+ p p p p h p p h p p v p p p p p p p p p p p p p h p p
 p p p p p p p p p p p p p p p p v p p p p p p p p p p
  p p p h p p p p p p p p v p p p p p p p p p p p p p p
-p p p p p p p p p p p v p V p v p p p p p p p p p p p
+p p p p p p p p p h p v p V p v p p p p p p p p p p p

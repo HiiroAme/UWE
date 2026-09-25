@@ -8,7 +8,7 @@
   - 单位：10 北 + 9 南，摆在合法格子上，**不能堆叠**；
   - 相邻关系对称（A 连 B ⇒ B 连 A）；
   - 地形属性进了 State（河不可进入、村庄防守 ×2、胜利点标记）；
-  - 渡口成对：2 对 → 4 条双向通道，每对两岸隔一格河水；
+  - 渡口成对：3 对 → 6 条双向通道，每对两岸隔一格河水；
   - 这个 Mod **自己一个函数都不写**（玩法逻辑全在模块里）；
   - 视图脚本能把整张地图画出来（层数 = 729 × 3 + HUD）。
 """
@@ -80,7 +80,7 @@ class TestDemoRiverLoad(unittest.TestCase):
         nodes = state["nodes"]
 
         river = [n for n in nodes.values() if n["terrain"] == "river"]
-        self.assertEqual(len(river), 52)
+        self.assertEqual(len(river), 51)
         self.assertFalse(river[0]["passable"])
 
         village = [n for n in nodes.values() if n["terrain"] == "village"]
@@ -96,10 +96,10 @@ class TestDemoRiverLoad(unittest.TestCase):
         self.assertEqual(hill[0]["defense_mult"], 2)
 
     def test_ford_crossings_are_paired_and_two_way(self):
-        """渡口：2 对 → 4 条双向通道，每条的"两地"中间隔着一格河水。"""
+        """渡口：3 对 → 6 条双向通道，每条的"两地"中间隔着一格河水。"""
         state = load_river().initial_state
         fords = state["fords"]
-        self.assertEqual(len(fords), 4)
+        self.assertEqual(len(fords), 6)
 
         by_node = {key: node for key, node in state["nodes"].items()}
         for crossing in fords:

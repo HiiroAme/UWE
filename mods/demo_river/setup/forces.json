@@ -15,7 +15,7 @@
     { "id": "south_1", "name": "柳浦 1 连", "side": "south", "attack": 2, "move": 3, "row": 22, "col": 12 },
     { "id": "south_2", "name": "柳浦 2 连", "side": "south", "attack": 2, "move": 3, "row": 23, "col": 15 },
     { "id": "south_3", "name": "柳浦 3 连", "side": "south", "attack": 2, "move": 3, "row": 24, "col": 11 },
-    { "id": "south_4", "name": "柳浦 4 连", "side": "south", "attack": 2, "move": 3, "row": 26, "col": 13 },
+    { "id": "south_4", "name": "柳浦 4 连", "side": "south", "attack": 4, "move": 5, "row": 26, "col": 13 },
     { "id": "south_5", "name": "柳浦 5 连", "side": "south", "attack": 2, "move": 3, "row": 24, "col": 14 },
     { "id": "south_6", "name": "柳浦 6 连", "side": "south", "attack": 2, "move": 3, "row": 25, "col": 10 },
     { "id": "south_7", "name": "柳浦侦察排",   "side": "south", "attack": 3, "move": 4, "row": 11, "col": 8 },
