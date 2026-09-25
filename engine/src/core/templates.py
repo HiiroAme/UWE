@@ -34,11 +34,14 @@ from .state.tree import add_key, exists as state_exists, replace
 from .state.values import snapshot_value
 
 
-def make_create_instance_service(content: CompiledContent):
+def make_create_instance_service(content: CompiledContent,
+                                 *, functions: Mapping[str, Callable[..., Any]] | None = None):
     """造出引擎原子服务 `engine:service:create_instance` 的实现。
 
     输入：
         content: 编译后的内容（模板在这里）。
+        functions: 表达式可用到的外部函数表（随机、几何……）。运行期要传进来：
+            模板属性里写 ["call", …] 时才算得出来（N-2 / R6-3 同族）。
     输出：
         服务函数 fn(api, args) -> None。
     异常：
@@ -86,7 +89,7 @@ def make_create_instance_service(content: CompiledContent):
 
         values: dict = {}
         for name, expression in template.attributes.items():
-            values[name] = evaluate(expression, api, args=args)
+            values[name] = evaluate(expression, api, args=args, functions=functions)
         for name, value in overrides.items():
             values[name] = value
 

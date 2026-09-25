@@ -71,7 +71,12 @@ class Renderer(Protocol):
         """在矩形里画文字（按 align 对齐；字号是像素高）。"""
 
     def draw_image(self, path: str, rect: tuple[float, float, float, float]) -> None:
-        """把图片缩放到矩形里画出来（路径由适配器解释）。"""
+        """把图片缩放到矩形里画出来（路径由适配器解释）。
+
+        路径口径（与 Media 端口一致）：绝对路径照用；相对路径按"这一局的资源根目录"
+        解析（由宿主在进入一局时告诉渲染端，通常是 Mod 文件夹），找不到再回退工作目录。
+        这条只约束适配器怎么找文件，核心与端口本身不读文件系统（P7）。
+        """
 
     def end_frame(self) -> None:
         """结束一帧（把内容真正显示出来）。"""

@@ -154,6 +154,7 @@ class TestMove(unittest.TestCase):
                                 page_id="demo_river:ui:battle", functions=session.loaded.functions))
         empty = next(layer for layer in view.layers if layer.id == "input:empty")
         self.assertEqual(empty.click.kind, "clear_selection")
+        self.assertFalse(empty.visible)          # 热区不画（N-1：画出来会盖住背景）
 
         result = self._send("clear_selection", {})
         self.assertTrue(result.committed)

@@ -719,7 +719,9 @@ class ModContext:
         输入：
             template_id: 模板条目 id；
             reader: 可选的读取入口（模板属性里若引用了 State，就靠它读）；
-            functions: 可选的外部函数表（Mod 的 functions）。
+            functions: 可选的外部函数表；**缺省用加载期组装好的那一份**（self.functions）。
+                这个默认值很关键：模板属性里写 ["call", …] 时，不传就该用 Mod 自己的函数表，
+                而不是空表（N-2 / R6-3 同族）。
         输出：
             属性名 → 具体值 的新字典。
         异常：
@@ -731,8 +733,9 @@ class ModContext:
         from core.state.values import snapshot_value   # 加载层只在这里用一次
 
         template = self.content.templates[template_id]
+        table = self.functions if functions is None else functions
         return {
-            name: snapshot_value(evaluate(expression, reader, functions=functions))
+            name: snapshot_value(evaluate(expression, reader, functions=table))
             for name, expression in template.attributes.items()
         }
 

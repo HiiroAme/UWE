@@ -319,6 +319,30 @@ class TestLoader(unittest.TestCase):
         )
         with self.assertRaises(PackInfoError):
             loader.load(loader.load_info(str(folder)))
+
+    def test_template_values_uses_mod_functions_by_default(self):
+        """N-2：init 不显式传函数表时，模板属性里的 ["call", 模块函数] 也要算得出来。"""
+        modules_root = pathlib.Path(__file__).resolve().parents[3] / "modules"
+        entries = [{
+            "id": "demo:entity:unit",
+            "type": "entity",
+            "data": {"attributes": {"home": ["call", "pack_hex_grid.node_key.q_r", 0, 0]}},
+        }]
+        scripts = {"init.py": 'def build_state(mod):\n'
+                              '    """只调 template_values，不显式传函数表。"""\n'
+                              '    return {"unit": mod.template_values("demo:entity:unit")}\n'}
+        folder = self._make_mod(
+            "demo",
+            info={"init": "scripts/init.py:build_state", "uses": ["pack_hex_grid>=0.0.0"]},
+            entries=entries,
+            scripts=scripts,
+        )
+        loader = ModLoader(LocalFileSystem(), PythonScriptLoader(), str(self._root),
+                           module_roots=[str(modules_root)])
+        loaded = loader.load(loader.load_info(str(folder)))
+        self.assertEqual(loaded.initial_state["unit"]["home"], "n0_0")
+
+
 class TestReferenceCheckEdges(unittest.TestCase):
     """R4-1 / R4-2 / R4-3：核对器的三条边界。"""
 

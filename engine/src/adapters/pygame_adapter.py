@@ -9,6 +9,12 @@
     - 实现渲染端口：清屏、实心矩形、文字、图片；
     - 缓存字体与图片（同一路径不重复加载）。
 
+资源路径口径（与 PygameMedia 一致）：
+    绝对路径照用；相对路径先按 `set_asset_root()` 给的基准目录解析，
+    找不到再回退进程当前工作目录。基准目录由**宿主**在进入一局时设置
+    （main.py 把它接到正在加载的 Mod 文件夹上），所以 Mod 里写
+    `kind="image", image="assets/x.png"` 这种相对路径才有意义（C-3）。
+
 字体口径：
     中文要能显示，所以优先用调用方给的字体文件（例如 msyh.ttc）；
     没给或加载失败时退回 pygame 的默认字体（英文数字能看，中文可能是方框）。
@@ -47,7 +53,8 @@ class PygameAdapter:
         _screen: pygame 的窗口 Surface；
         _font_path: 正在用的字体文件（空字符串表示用默认字体）；
         _fonts: 字号 → 字体对象（缓存）；
-        _images: 路径 → Surface（缓存）；
+        _images: 解析后的路径 → Surface（缓存；加载失败记 None）；
+        _asset_root: 相对资源路径的基准目录（None = 没有基准，按进程当前目录）；
         _clock: 帧率控制；
         _size: 窗口尺寸；
         _pressed: 左键是否按下（用来区分点击与拖动）；
@@ -62,6 +69,7 @@ class PygameAdapter:
         *,
         font_path: str = "",
         fps: int = 60,
+        asset_root: str = "",
     ) -> None:
         """创建窗口与渲染器。
 
@@ -70,6 +78,8 @@ class PygameAdapter:
             size: 窗口尺寸 (宽, 高)；
             font_path: 中文字体文件路径；空字符串表示自动挑一个候选；
             fps: 帧率上限（避免空转吃满 CPU）。
+            asset_root: 相对资源路径的基准目录（通常是这一局的 Mod 文件夹）；
+                空字符串表示没有基准，此时相对路径按进程当前工作目录解析。
         输出：
             无（构造对象）。
         异常：
@@ -89,6 +99,7 @@ class PygameAdapter:
         self._font_path: str = font_path or _first_existing(DEFAULT_FONT_CANDIDATES)
         self._fonts: dict[int, Any] = {}
         self._images: dict[str, Any] = {}
+        self._asset_root: Path | None = Path(asset_root) if asset_root else None
         self._clock = pygame.time.Clock()
         self._fps: int = fps
         self._pressed: bool = False
@@ -112,6 +123,39 @@ class PygameAdapter:
         except Exception as exc:
             print(f"[适配器] 设置窗口图标失败：{path}：{exc}")
             return False
+
+    def set_asset_root(self, path: str) -> None:
+        """换"相对资源路径的基准目录"（宿主在进入 / 离开一局时调用）。
+
+        输入：
+            path: 新的基准目录；空字符串表示没有基准（相对路径按当前工作目录）。
+        输出：
+            无。
+        异常：
+            无。
+
+        说明：
+            只管**往后**画的图：已缓存的 Surface 按解析后的绝对路径存着，
+            换基准不会让旧图串到新图上（换了基准又画同一个逻辑路径时会重新加载）。
+        """
+        self._asset_root = Path(path) if path else None
+
+    def resolve_asset(self, path: str) -> str:
+        """把资源路径解析成"准备交给 pygame 的实际路径"。
+
+        输入：
+            path: 逻辑资源路径（Mod 里通常写 "assets/x.png"）。
+        输出：
+            str：绝对路径照用；相对路径在基准目录下存在就用基准目录那份，
+            否则原样返回（回退当前工作目录，和 PygameMedia 的口径一致）。
+        异常：
+            无。
+        """
+        raw = Path(path)
+        if raw.is_absolute() or self._asset_root is None:
+            return str(raw)
+        candidate = self._asset_root / raw
+        return str(candidate) if candidate.is_file() else str(raw)
 
     def poll_events(self) -> tuple[WindowEvent, ...]:
         """取走本帧的全部事件，翻译成统一窗口事件。
@@ -211,7 +255,9 @@ class PygameAdapter:
             self._screen.fill(_rgb(background))
 
     def draw_rect(self, rect: tuple[float, float, float, float], color: tuple[int, int, int, int]) -> None:
-        """画一个实心矩形。"""
+        """画一个实心矩形；alpha=0 表示"不画"（透明层不该涂黑，R6-8 / N-1）。"""
+        if color[3] <= 0:
+            return
         self._screen.fill(_rgb(color), _rect(rect))
 
     def draw_polygon(
@@ -238,8 +284,12 @@ class PygameAdapter:
         polygon = [(int(x), int(y)) for x, y in points]
         if len(polygon) < 3:
             return
-        pygame.draw.polygon(self._screen, _rgb(color), polygon)
-        if outline_color is not None and outline_width and outline_width > 0:
+        # alpha=0 只表示"这一部分不画"：填充透明就跳过填充（否则会被画成实心黑），
+        # 描边透明就跳过描边——模块画"只有格线、没有底色"的格子正是这种写法（N-1）。
+        if color[3] > 0:
+            pygame.draw.polygon(self._screen, _rgb(color), polygon)
+        if (outline_color is not None and outline_color[3] > 0
+                and outline_width and outline_width > 0):
             width = max(1, int(round(outline_width)))
             # 描边要落在多边形**内侧**：把顶点朝中心缩半个线宽，
             # 再用**闭合折线**画（pygame 的"实心多边形 + 线宽"会漏边，折线不会）。
@@ -294,25 +344,26 @@ class PygameAdapter:
             self._screen.blit(surface, (left, top + index * line_height))
 
     def draw_image(self, path: str, rect: tuple[float, float, float, float]) -> None:
-        """把图片缩放进矩形画出来（同一路径只加载一次）。
+        """把图片缩放进矩形画出来（同一个实际路径只加载一次）。
 
         输入：
-            path: 图片路径；
+            path: 图片路径（相对路径按 set_asset_root 给的基准目录解析）；
             rect: 目标矩形。
         输出：
             无。
         异常：
             无（加载失败时跳过这张图，并在控制台留一行说明）。
         变量：
-            surface / scaled: 原图与缩放后的图。
+            resolved / surface / scaled: 实际路径、原图与缩放后的图。
         """
-        if path not in self._images:
+        resolved = self.resolve_asset(path)
+        if resolved not in self._images:
             try:
-                self._images[path] = pygame.image.load(path).convert_alpha()
+                self._images[resolved] = pygame.image.load(resolved).convert_alpha()
             except Exception as exc:  # 图片缺失不该让整局游戏崩掉
                 print(f"[适配器] 图片加载失败：{path}：{exc}")
-                self._images[path] = None
-        surface = self._images[path]
+                self._images[resolved] = None
+        surface = self._images[resolved]
         if surface is None:
             return
         width, height = int(rect[2]), int(rect[3])

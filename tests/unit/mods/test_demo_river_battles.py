@@ -201,6 +201,7 @@ class TestBattleDeclarations(unittest.TestCase):
         session = make_session()
         session.state["game_over"] = True
         session.state["winner"] = "north"
+        session.state["turn"] = 7                 # 真实收局时的样子：第 6 回合末 turn 变 7
         loaded = session.loaded
         page = loaded.pages["demo_river:ui:battle"]
         view = page(PageContext(state=session.state, size=(960, 640), context=Context(),
@@ -208,6 +209,9 @@ class TestBattleDeclarations(unittest.TestCase):
         ids = {layer.id for layer in view.layers}
         self.assertIn("banner:winner", ids)
         self.assertIn("button:game_over", ids)
+        hud = next(layer for layer in view.layers if layer.id == "hud")
+        self.assertIn("战斗结束", hud.text)              # 收局 HUD 换成收尾文案（C-4）
+        self.assertNotIn("第 7 回合", hud.text)
         clickable = [l for l in view.layers if l.click is not None and not l.fixed]
         self.assertEqual(clickable, [])          # 地图上没有任何可点的层了
 

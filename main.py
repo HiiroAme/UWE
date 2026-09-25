@@ -126,6 +126,8 @@ def main() -> int:
         logger=logger,
         # 媒体适配器按"这一局的 Mod 目录"构造：相对路径（如 assets/hit.wav）才找得到（R6-6）。
         media_factory=lambda mod_folder: PygameMedia(base_dir=mod_folder),
+        # 渲染端同理：图片的相对路径（kind="image" 的 image="assets/x.png"）按 Mod 目录解析（C-3）。
+        asset_root_sink=window.set_asset_root,
     )
     logger.info("进入主循环（Esc 返回首页 / 退出，S 存档）")
     try:

@@ -287,7 +287,9 @@ class EngineRuntime:
             # 函数表要一起传：公式里写了 ["call", …] 时，触发链这条路才和引擎自愈那条路等价（R6-3）。
             REFRESH_DERIVED_SERVICE: make_refresh_service(
                 self._content.formulas, functions=self._functions),
-            CREATE_INSTANCE_SERVICE: make_create_instance_service(self._content),
+            # 模板属性里也可能写 ["call", …]：函数表同样要传（N-2）。
+            CREATE_INSTANCE_SERVICE: make_create_instance_service(
+                self._content, functions=self._functions),
         }
 
     def refresh_derived(self) -> tuple:

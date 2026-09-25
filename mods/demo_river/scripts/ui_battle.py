@@ -157,7 +157,7 @@ def build_view(page_context):
     if not state.get("game_over"):
         layers.append(Layer(
             id="input:empty", rect=(0.0, 0.0, float(width), float(height)),
-            kind="rect", color=(0, 0, 0, 0), z=1, fixed=True,
+            kind="rect", color=(0, 0, 0, 0), z=1, fixed=True, visible=False,
             click=ClickResult(kind="clear_selection", data={}),
         ))
     layers.extend(make_grid(**grid_args))
@@ -798,6 +798,10 @@ def _disorder_markers(page_context, visible, units, world_center):
 
 def _hud_text(state, nodes, units, camera, visible_count):
     """顶部信息条：局面、地图规模、相机状态，以及"现在该干什么"的提示。"""
+    if state.get("game_over"):
+        # 收局时别再显示"第 7 回合 · 移动阶段…"（回合数已经跨过上限，提示也没意义了）。
+        rounds = max(0, int(_number(state.get("turn", 1))) - 1)
+        return f"战斗结束 · 共 {rounds} 回合"
     north = sum(1 for u in units.values() if u.get("side") == "north")
     south = sum(1 for u in units.values() if u.get("side") == "south")
     stage = state.get("stage", "?")

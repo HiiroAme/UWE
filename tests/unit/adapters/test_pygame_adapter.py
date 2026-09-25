@@ -59,6 +59,15 @@ class TestPygameAdapter(unittest.TestCase):
         """没有输入时事件是空元组（类型正确）。"""
         self.assertEqual(self.window.poll_events(), ())
 
+    def test_transparent_shapes_do_not_paint(self):
+        """alpha=0 的 rect / polygon 不填充：背景色保持不变（R6-8 / N-1）。"""
+        self.window.begin_frame((18, 20, 26, 255))
+        self.window.draw_rect((0, 0, 320, 240), (0, 0, 0, 0))
+        self.window.draw_polygon(
+            ((0.0, 0.0), (320.0, 0.0), (320.0, 240.0), (0.0, 240.0)), (0, 0, 0, 0))
+        self.assertEqual(tuple(self.window._screen.get_at((10, 10)))[:3], (18, 20, 26))
+        self.assertEqual(tuple(self.window._screen.get_at((300, 200)))[:3], (18, 20, 26))
+
     def test_set_icon(self):
         """设置窗口图标：正常路径返回 True，缺失文件返回 False 不抛。"""
         folder = SCRATCH_ROOT / f"case_{self._testMethodName}"
@@ -72,6 +81,34 @@ class TestPygameAdapter(unittest.TestCase):
             self.assertTrue(self.window.set_icon(str(icon_path)))
             self.assertFalse(self.window.set_icon(str(folder / "missing.png")))
         finally:
+            shutil.rmtree(folder, ignore_errors=True)
+            try:
+                SCRATCH_ROOT.rmdir()
+            except OSError:
+                pass
+
+    def test_asset_root_resolves_relative_image(self):
+        """给了资源根目录：相对路径的图片按它解析并真的画出来（C-3）。"""
+        folder = SCRATCH_ROOT / f"case_{self._testMethodName}"
+        shutil.rmtree(folder, ignore_errors=True)
+        (folder / "assets").mkdir(parents=True, exist_ok=True)
+        try:
+            paint = pygame.Surface((8, 8))
+            paint.fill((250, 30, 40))
+            pygame.image.save(paint, str(folder / "assets" / "tile.png"))
+
+            self.window.set_asset_root(str(folder))
+            self.window.begin_frame((0, 0, 0, 255))
+            self.window.draw_image("assets/tile.png", (0, 0, 320, 240))
+            pixel = tuple(self.window._screen.get_at((160, 120)))[:3]
+            for channel, expected in zip(pixel, (250, 30, 40)):
+                self.assertLessEqual(abs(channel - expected), 2, f"实际像素 {pixel}")
+
+            # 撤回基准目录（回首页）后相对路径找不到：只提醒、不抛，屏幕也不该崩。
+            self.window.set_asset_root("")
+            self.window.draw_image("assets/tile.png", (0, 0, 10, 10))
+        finally:
+            self.window.set_asset_root("")
             shutil.rmtree(folder, ignore_errors=True)
             try:
                 SCRATCH_ROOT.rmdir()

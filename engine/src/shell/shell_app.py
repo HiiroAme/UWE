@@ -83,6 +83,7 @@ class ShellApp:
         logger: Logger | None = None,
         seed_supplier: Callable[[], int] | None = None,
         media_factory: Callable[[str], Media] | None = None,
+        asset_root_sink: Callable[[str], None] | None = None,
         clock: Callable[[], float] | None = None,
         title: str = ENGINE_NAME,
     ) -> None:
@@ -99,6 +100,9 @@ class ShellApp:
             seed_supplier: 取新游戏随机种子的调用；缺省用秒级时间戳；
             media_factory: 按"Mod 文件夹"造媒体端口的调用（宿主注入，例如 PygameMedia）；
                 缺省 None = 静默，不碰任何平台（R6-6）；
+            asset_root_sink: 把"这一局的资源根目录（Mod 文件夹）"告诉渲染端的调用
+                （宿主注入，例如 PygameAdapter.set_asset_root）；进游戏时给 Mod 文件夹，
+                回首页时给空字符串。缺省 None = 静默（C-3）；
             clock: 读时间的调用（秒，单调递增）；缺省 time.monotonic，测试可注入假时钟；
             title: 窗口标题。
         输出：
@@ -129,6 +133,7 @@ class ShellApp:
         self._overlay_host: UiHost = UiHost(window, context=self._context, logger=logger)
         self._seed_supplier: Callable[[], int] = seed_supplier or (lambda: int(time.time()))
         self._media_factory: Callable[[str], Media] | None = media_factory
+        self._asset_root_sink: Callable[[str], None] | None = asset_root_sink
         self._clock: Callable[[], float] = clock or time.monotonic
         self._message_until: float = 0.0
         self._title: str = title
@@ -647,6 +652,21 @@ class ShellApp:
             return None
         return self._media_factory(mod_folder)
 
+    def _set_asset_root(self, mod_folder: str) -> None:
+        """把"这一局的资源根目录"告诉渲染端；宿主没注入这个口子就静默跳过。
+
+        输入：
+            mod_folder: Mod 文件夹（进游戏时给加载层那份，回首页时给空字符串）。
+        输出：
+            无。
+        异常：
+            由注入的调用抛出（这里是宿主自己的接线出错，应当让它显形）。
+        变量：
+            无。
+        """
+        if self._asset_root_sink is not None:
+            self._asset_root_sink(mod_folder)
+
     def start_new_game(self, mod_id: str) -> None:
         """全加载选中的 Mod 并开新局。"""
         try:
@@ -693,6 +713,8 @@ class ShellApp:
         self._session = session
         self._put_message("")
         self._context.put(_KEY_MENU_OPEN, False)
+        # 相对资源路径（图片）按这一局的 Mod 目录解析；回首页时再撤回（C-3）。
+        self._set_asset_root(session.loaded.info.folder)
         page_id = session.loaded.default_page
         if page_id:
             page = session.loaded.pages[page_id]
@@ -753,6 +775,7 @@ class ShellApp:
             self.trigger_syscall("engine:syscall:cleanup")
         self._session = None
         self._syscalls = None
+        self._set_asset_root("")  # 首页不属于任何 Mod，相对资源路径不再指向它（C-3）
         self._context.put(_KEY_MENU_OPEN, False)
         self._game_host.set_provider(None)
         self._overlay_host.set_provider(None)
