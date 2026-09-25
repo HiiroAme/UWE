@@ -45,6 +45,10 @@ _KEY_SAVES = "shell.saves"
 _KEY_INDEX = "shell.index"
 _KEY_MENU_OPEN = "shell.menu_open"
 
+# 外壳状态提示的存活时间（秒）：到点自动消失；失败类提示给得长一点，免得没看清就没了。
+_MESSAGE_SECONDS = 3.0
+_MESSAGE_SECONDS_LONG = 6.0
+
 # 外壳自己的层用这个前缀，点击时不会被当成 Mod 的输入（§17.1 两个来源）。
 SHELL_PREFIX = "shell:"
 
@@ -61,6 +65,8 @@ class ShellApp:
         _session: 当前这一局（None 表示还没开始）；
         _screen_host / _game_host / _overlay_host: 画面来源与点击分发的三个宿主；
         _seed_supplier: 取新游戏种子的调用（缺省用当前时间，便于复现时可以换成固定值）；
+        _clock: 读时间的调用（缺省 time.monotonic，用于状态提示的过期）；
+        _message_until: 当前状态提示该在什么时刻消失（0 = 没有提示）；
         _title: 窗口标题。
         _mods_root / _saves_root: 目录（设置页要显示，重载时还要用）。
     """
@@ -76,6 +82,7 @@ class ShellApp:
         modules_root: str = "",
         logger: Logger | None = None,
         seed_supplier: Callable[[], int] | None = None,
+        clock: Callable[[], float] | None = None,
         title: str = ENGINE_NAME,
     ) -> None:
         """创建外壳应用。
@@ -89,6 +96,7 @@ class ShellApp:
             modules_root: 逻辑模块根目录（每个子文件夹一个模块）；空字符串表示不带模块。
             logger: 日志对象；
             seed_supplier: 取新游戏随机种子的调用；缺省用秒级时间戳；
+            clock: 读时间的调用（秒，单调递增）；缺省 time.monotonic，测试可注入假时钟；
             title: 窗口标题。
         输出：
             无（构造对象）。
@@ -117,6 +125,8 @@ class ShellApp:
         self._game_host: UiHost = UiHost(window, context=self._context, logger=logger)
         self._overlay_host: UiHost = UiHost(window, context=self._context, logger=logger)
         self._seed_supplier: Callable[[], int] = seed_supplier or (lambda: int(time.time()))
+        self._clock: Callable[[], float] = clock or time.monotonic
+        self._message_until: float = 0.0
         self._title: str = title
         # 主循环开关：退出类操作把它置 False，由 run() 统一收尾（关窗口只做一次）。
         self._running: bool = True
@@ -201,6 +211,44 @@ class ShellApp:
     def _text(self, key: str, default: str, **fields: Any) -> str:
         """取一条外壳文字：JSON 优先，缺失时用代码里的默认值。"""
         return self._texts.get(key, default, **fields)
+
+    def _put_message(self, text: str, ttl: float = _MESSAGE_SECONDS) -> None:
+        """写一行外壳状态提示，并记下它什么时候该消失。
+
+        输入：
+            text: 提示文字；空串表示"清掉提示"；
+            ttl: 存活秒数（默认 3 秒，失败类提示用 _MESSAGE_SECONDS_LONG）。
+        输出：
+            无。
+        异常：
+            无。
+        变量：
+            无。
+
+        说明：
+            提示是**外壳自己的界面状态**（§6.1，不进存档）：存档、重载、读档失败
+            这类系统事件的反馈都由外壳产生，所以生命周期也在外壳这一层管。
+        """
+        self._context.put(_KEY_MESSAGE, text)
+        self._message_until = self._clock() + ttl if text else 0.0
+
+    def _visible_message(self) -> str:
+        """当前还没过期的状态提示；到点就顺手清掉（视图每帧都会问一次）。
+
+        输入：无。
+        输出：
+            提示文字；没有提示或已经过期时是空串。
+        异常：
+            无。
+        变量：
+            无。
+        """
+        if self._clock() >= self._message_until:
+            if self._context.get(_KEY_MESSAGE, ""):
+                self._context.put(_KEY_MESSAGE, "")
+            self._message_until = 0.0
+            return ""
+        return self._context.get(_KEY_MESSAGE, "")
 
     def handle_click(self, event: WindowEvent) -> None:
         """处理一次点击：先给最上层（外壳按钮），再给 Mod 的界面。
@@ -351,13 +399,16 @@ class ShellApp:
         try:
             result = self._loader.try_scan()
         except Exception as exc:
-            self._context.put(_KEY_MESSAGE, f"扫描 Mod 失败：{exc}")
+            self._put_message(f"扫描 Mod 失败：{exc}", _MESSAGE_SECONDS_LONG)
             return ()
         if result.problems:
             details = "；".join(
                 f"{_file_name(problem.folder)}：{problem.detail}" for problem in result.problems
             )
-            self._context.put(_KEY_MESSAGE, f"有 {len(result.problems)} 个文件夹读不出来 —— {details}")
+            self._put_message(
+                f"有 {len(result.problems)} 个文件夹读不出来 —— {details}",
+                _MESSAGE_SECONDS_LONG,
+            )
         return result.mods
 
     def _list_saves(self) -> tuple[str, ...]:
@@ -391,7 +442,7 @@ class ShellApp:
                     align="left",
                     z=10,
                 ),
-                _message_layer(self._context, (0, height - 60, width, 40)),
+                _message_layer(self._visible_message(), (0, height - 60, width, 40)),
             )
         )
 
@@ -417,7 +468,7 @@ class ShellApp:
                 _button("about", self._text("settings.about", "关于"),
                         (width / 2 - 90, height / 2 - 22, 180, 44)),
                 _button("back", self._text("settings.back", "返回"), (24, 24, 120, 40)),
-                _message_layer(self._context, (0, height - 64, width, 40)),
+                _message_layer(self._visible_message(), (0, height - 64, width, 40)),
             )
         )
 
@@ -438,7 +489,7 @@ class ShellApp:
                     text_color=(230, 230, 230, 255),
                 ),
                 _button("about_back", self._text("about.back", "返回"), (24, 24, 120, 40)),
-                _message_layer(self._context, (0, height - 64, width, 40)),
+                _message_layer(self._visible_message(), (0, height - 64, width, 40)),
             )
         )
 
@@ -450,7 +501,7 @@ class ShellApp:
             _label("shell:title", self._text("mod_select.title", "选择一个 Mod"),
                    (0, 40, width, 40), 26),
             _button("back", self._text("common.back", "返回"), (24, 24, 120, 40)),
-            _message_layer(self._context, (0, height - 64, width, 40)),
+            _message_layer(self._visible_message(), (0, height - 64, width, 40)),
         ]
         if not mods:
             layers.append(_label(
@@ -486,7 +537,7 @@ class ShellApp:
         layers: list[Layer] = [
             _label("shell:title", self._text("load.title", "读取存档"), (0, 40, width, 40), 26),
             _button("back", self._text("common.back", "返回"), (24, 24, 120, 40)),
-            _message_layer(self._context, (0, height - 64, width, 40)),
+            _message_layer(self._visible_message(), (0, height - 64, width, 40)),
         ]
         if not saves:
             layers.append(_label(
@@ -539,7 +590,7 @@ class ShellApp:
         elif action == "quit":
             # 走同一个退出路径：先自动存档、再让主循环停（不在这里直接关窗口，
             # 否则这一帧接下来的 poll_events 会因为窗口已经没了而报错）。
-            self._context.put(_KEY_MESSAGE, self._text("message.bye", "再见"))
+            self._put_message(self._text("message.bye", "再见"))
             self._quit()
         elif action == "back":
             self._set_screen("menu")
@@ -593,7 +644,7 @@ class ShellApp:
                 log_level=self._logger.min_level if self._logger is not None else LogLevel.INFO,
             )
         except Exception as exc:
-            self._context.put(_KEY_MESSAGE, f"加载 Mod 失败：{exc}")
+            self._put_message(f"加载 Mod 失败：{exc}", _MESSAGE_SECONDS_LONG)
             return
         self._enter_game(session)
 
@@ -611,14 +662,14 @@ class ShellApp:
             session = GameSession(loaded, files=self._files, seed=0, save_path=path)
             session.runtime.apply_save(save)
         except Exception as exc:
-            self._context.put(_KEY_MESSAGE, f"读档失败：{exc}")
+            self._put_message(f"读档失败：{exc}", _MESSAGE_SECONDS_LONG)
             return
         self._enter_game(session)
 
     def _enter_game(self, session: GameSession) -> None:
         """进入游戏：把 Mod 的视图脚本接上，并装好外壳按钮。"""
         self._session = session
-        self._context.put(_KEY_MESSAGE, "")
+        self._put_message("")
         self._context.put(_KEY_MENU_OPEN, False)
         page_id = session.loaded.default_page
         if page_id:
@@ -712,7 +763,7 @@ class ShellApp:
             return ""
         target = f"{self._saves_root}/{self._session.mod_info.id}_autosave.json"
         self._session.save(target, meta={"kind": "autosave"})
-        self._context.put(_KEY_MESSAGE, f"已自动存档：{_file_name(target)}")
+        self._put_message(f"已自动存档：{_file_name(target)}")
         return target
 
     def _cleanup(self) -> str:
@@ -759,7 +810,7 @@ class ShellApp:
         loaded = self._loader.load(info)
         self._session.apply_reload(loaded)
         self._enter_game(self._session)  # 重新接界面（页面脚本也可能换了）
-        self._context.put(_KEY_MESSAGE, f"已重载 Mod：{info.name} v{info.version}")
+        self._put_message(f"已重载 Mod：{info.name} v{info.version}")
         return f"已重载 {info.id}"
 
     def trigger_syscall(self, syscall_id: str, *, args: dict | None = None) -> SyscallResult | None:
@@ -783,7 +834,7 @@ class ShellApp:
             return None
         result = self._syscalls.run(syscall_id, args=args)
         if not result.ok:
-            self._context.put(_KEY_MESSAGE, f"系统事件失败：{result.detail}")
+            self._put_message(f"系统事件失败：{result.detail}", _MESSAGE_SECONDS_LONG)
         return result
 
     def _save_current(self) -> None:
@@ -793,17 +844,16 @@ class ShellApp:
         try:
             save = self._session.save()
         except Exception as exc:
-            self._context.put(_KEY_MESSAGE, f"存档失败：{exc}")
+            self._put_message(f"存档失败：{exc}", _MESSAGE_SECONDS_LONG)
             return
-        self._context.put(
-            _KEY_MESSAGE,
-            f"已存档：{_file_name(self._session.save_path)}（命令 {len(save.commands)} 条）",
+        self._put_message(
+            f"已存档：{_file_name(self._session.save_path)}（命令 {len(save.commands)} 条）"
         )
 
     def _game_overlay_view(self, host: UiHost) -> View:
         """游戏内菜单栏：左上角「菜单」；打开后是 存档 / 退出到首页 / Mod 菜单项。"""
         width, height = self._window.size()
-        message = self._context.get(_KEY_MESSAGE, "")
+        message = self._visible_message()
         layers: list[Layer] = []
         # Mod 的模态弹窗（规则 / 开局介绍）打开时：外壳菜单按钮让位，Esc 由 Mod 的
         # escape_target 接管（见 handle_key 的第一优先级）。
@@ -929,13 +979,13 @@ def _label(layer_id: str, text: str, rect: tuple[float, float, float, float], si
     )
 
 
-def _message_layer(context: Context, rect: tuple[float, float, float, float]) -> Layer:
-    """造一行提示文字（内容来自界面状态）。"""
+def _message_layer(text: str, rect: tuple[float, float, float, float]) -> Layer:
+    """造一行提示文字（文字由调用方给：外壳按存活时间过滤过）。"""
     return Layer(
         id="shell:message",
         rect=rect,
         kind="text",
-        text=context.get(_KEY_MESSAGE, ""),
+        text=text,
         font_size=18,
         color=(0, 0, 0, 0),
         text_color=(230, 180, 120, 255),
