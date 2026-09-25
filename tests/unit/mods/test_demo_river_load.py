@@ -5,7 +5,7 @@
 
 覆盖（对应示例兵棋设计文档 §5 / §7 / §13）：
   - 加载：729 格地图（27×27 正方形）→ State（节点 / 相邻关系 / 渡口对 / 编成）；
-  - 单位：10 北 + 8 南，摆在合法格子上，**不能堆叠**；
+  - 单位：10 北 + 9 南，摆在合法格子上，**不能堆叠**；
   - 相邻关系对称（A 连 B ⇒ B 连 A）；
   - 地形属性进了 State（河不可进入、村庄防守 ×2、胜利点标记）；
   - 渡口成对：2 对 → 4 条双向通道，每对两岸隔一格河水；
@@ -51,12 +51,12 @@ class TestDemoRiverLoad(unittest.TestCase):
         self.assertEqual(state["map"]["cols"], 27)
 
     def test_units_are_placed_without_stacking(self):
-        """18 个单位（北 10 / 南 8）都在地图上，而且没有两个挤在一格。"""
+        """19 个单位（北 10 / 南 9）都在地图上，而且没有两个挤在一格。"""
         state = load_river().initial_state
         units = state["units"]
-        self.assertEqual(len(units), 18)
+        self.assertEqual(len(units), 19)
         self.assertEqual(sum(1 for u in units.values() if u["side"] == "north"), 10)
-        self.assertEqual(sum(1 for u in units.values() if u["side"] == "south"), 8)
+        self.assertEqual(sum(1 for u in units.values() if u["side"] == "south"), 9)
 
         positions = [u["at"] for u in units.values()]
         self.assertEqual(len(set(positions)), len(positions))     # 不能堆叠

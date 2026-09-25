@@ -19,6 +19,7 @@
     { "id": "south_5", "name": "柳浦 5 连", "side": "south", "attack": 2, "move": 3, "row": 24, "col": 14 },
     { "id": "south_6", "name": "柳浦 6 连", "side": "south", "attack": 2, "move": 3, "row": 25, "col": 10 },
     { "id": "south_7", "name": "柳浦侦察排",   "side": "south", "attack": 3, "move": 4, "row": 11, "col": 8 },
-    { "id": "south_8", "name": "柳浦装甲排",   "side": "south", "attack": 3, "move": 4, "row": 12, "col": 9 }
+    { "id": "south_8", "name": "柳浦装甲排",   "side": "south", "attack": 3, "move": 4, "row": 12, "col": 9 },
+    { "id": "south_9", "name": "柳浦侦察二排", "side": "south", "attack": 3, "move": 4, "row": 11, "col": 13 }
   ]
 }
