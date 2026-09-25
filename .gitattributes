@@ -1,0 +1,3 @@
+# 统一行尾：仓库里一律存 LF，检出也用 LF，避免 Windows 上出现
+# "LF will be replaced by CRLF" 警告和整文件级别的 diff 噪声。
+* text=auto eol=lf

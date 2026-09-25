@@ -1,0 +1,40 @@
+{
+  "id": "pack_path_hex",
+  "kind": "module",
+  "name": "六边形移动与路径",
+  "version": "0.0.0",
+  "author": "引擎自带模块",
+  "description": "六边形地图上的移动规则：可达范围（按地形消耗算最短路）、路径还原、控制区（ZOC）计算。全是纯函数，不认识任何具体玩法——地形消耗、能不能穿、能不能停、渡口这类特例通道、控制区全都由调用方（Mod）按参数给。",
+  "capabilities": {
+    "reachable": {
+      "kind": "function",
+      "script": "scripts/paths.py",
+      "variants": { "dijkstra": "reachable_cells" },
+      "default": "dijkstra"
+    },
+    "path": {
+      "kind": "function",
+      "script": "scripts/paths.py",
+      "variants": { "previous": "path_to" },
+      "default": "previous"
+    },
+    "zoc": {
+      "kind": "function",
+      "script": "scripts/paths.py",
+      "variants": { "from_units": "zoc_cells" },
+      "default": "from_units"
+    },
+    "retreat": {
+      "kind": "function",
+      "script": "scripts/paths.py",
+      "variants": { "random": "retreat_path" },
+      "default": "random"
+    },
+    "levels": {
+      "kind": "function",
+      "script": "scripts/paths.py",
+      "variants": { "from_state": "levels_from_state" },
+      "default": "from_state"
+    }
+  }
+}

@@ -1,0 +1,209 @@
+[
+  {
+    "id": "demo_river:rule:battle_running",
+    "type": "rule",
+    "metadata": {
+      "name": "战斗还没结束"
+    },
+    "data": {
+      "condition": [
+        "==",
+        [
+          "get",
+          "/game_over"
+        ],
+        false
+      ],
+      "message": "战斗已经结束，不能再操作了"
+    }
+  },
+  {
+    "id": "demo_river:rule:own_side",
+    "type": "rule",
+    "metadata": {
+      "name": "只能操作当前控制方的单位"
+    },
+    "data": {
+      "condition": [
+        "==",
+        [
+          "get",
+          [
+            "format",
+            "/units/{0}/side",
+            [
+              "arg",
+              "unit"
+            ]
+          ]
+        ],
+        [
+          "get",
+          "/control_side"
+        ]
+      ],
+      "message": "现在不是这一方在行动"
+    }
+  },
+  {
+    "id": "demo_river:rule:unit_alive",
+    "type": "rule",
+    "metadata": {
+      "name": "单位还活着"
+    },
+    "data": {
+      "condition": [
+        "==",
+        [
+          "get",
+          [
+            "format",
+            "/units/{0}/destroyed",
+            [
+              "arg",
+              "unit"
+            ]
+          ]
+        ],
+        false
+      ],
+      "message": "这个单位已经被击毁"
+    }
+  },
+  {
+    "id": "demo_river:rule:stage_is_move",
+    "type": "rule",
+    "metadata": {
+      "name": "现在是移动阶段"
+    },
+    "data": {
+      "condition": [
+        "==",
+        [
+          "get",
+          "/stage"
+        ],
+        "move"
+      ],
+      "message": "现在是攻击阶段，不能移动"
+    }
+  },
+  {
+    "id": "demo_river:rule:has_move",
+    "type": "rule",
+    "metadata": {
+      "name": "还有移动力"
+    },
+    "data": {
+      "condition": [
+        ">",
+        [
+          "get",
+          [
+            "format",
+            "/units/{0}/move_left",
+            [
+              "arg",
+              "unit"
+            ]
+          ]
+        ],
+        0
+      ],
+      "message": "这个单位本回合已经走不动了"
+    }
+  },
+  {
+    "id": "demo_river:rule:not_disordered",
+    "type": "rule",
+    "metadata": {
+      "name": "单位不在混乱中"
+    },
+    "data": {
+      "condition": [
+        "==",
+        [
+          "get",
+          [
+            "format",
+            "/units/{0}/disordered",
+            [
+              "arg",
+              "unit"
+            ]
+          ]
+        ],
+        false
+      ],
+      "message": "这个单位还在混乱中，不能移动也不能攻击"
+    }
+  },
+  {
+    "id": "demo_river:rule:stage_is_attack",
+    "type": "rule",
+    "metadata": {
+      "name": "现在是攻击阶段"
+    },
+    "data": {
+      "condition": [
+        "==",
+        [
+          "get",
+          "/stage"
+        ],
+        "attack"
+      ],
+      "message": "现在是移动阶段，不能攻击或结算"
+    }
+  },
+  {
+    "id": "demo_river:rule:not_settling",
+    "type": "rule",
+    "metadata": {
+      "name": "还没开始结算"
+    },
+    "data": {
+      "condition": [
+        "==",
+        [
+          "get_or",
+          "/settling",
+          false
+        ],
+        false
+      ],
+      "message": "战斗结算已经开始，不能再声明或调整参战单位"
+    }
+  },
+  {
+    "id": "demo_river:rule:no_pending_battles",
+    "type": "rule",
+    "metadata": {
+      "name": "没有未结算的战斗"
+    },
+    "data": {
+      "condition": [
+        "not",
+        [
+          "exists",
+          "/battles/0"
+        ]
+      ],
+      "message": "还有未结算的战斗，先结算完再结束回合"
+    }
+  },
+  {
+    "id": "demo_river:rule:has_pending_battles",
+    "type": "rule",
+    "metadata": {
+      "name": "有未结算的战斗"
+    },
+    "data": {
+      "condition": [
+        "exists",
+        "/battles/0"
+      ],
+      "message": "还没有声明任何战斗"
+    }
+  }
+]

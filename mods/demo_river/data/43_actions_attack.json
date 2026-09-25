@@ -1,0 +1,55 @@
+[
+  {
+    "id": "demo_river:action:declare_battle",
+    "type": "action",
+    "metadata": {
+      "name": "声明一场战斗（不结算）"
+    },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running",
+        "demo_river:rule:stage_is_attack",
+        "demo_river:rule:not_settling"
+      ],
+      "steps": [
+        {
+          "service": "pack_combat_crt:service:declare",
+          "args": {
+            "units": [
+              "arg",
+              "units"
+            ],
+            "target": [
+              "arg",
+              "target"
+            ]
+          }
+        },
+        {
+          "service": "demo_river:service:clear_attackers"
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:action:resolve_battle",
+    "type": "action",
+    "metadata": {
+      "name": "结算声明列表里的第一场（调用模块的 CRT 服务）"
+    },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running",
+        "demo_river:rule:stage_is_attack"
+      ],
+      "steps": [
+        {
+          "service": "demo_river:service:begin_settle"
+        },
+        {
+          "service": "pack_combat_crt:service:resolve_next"
+        }
+      ]
+    }
+  }
+]

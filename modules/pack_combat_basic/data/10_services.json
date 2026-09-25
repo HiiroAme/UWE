@@ -1,0 +1,8 @@
+[
+  {
+    "id": "pack_combat_basic:service:attack",
+    "type": "service",
+    "metadata": { "name": "攻击骨架（扣目标量 + 记战报 + 抛事件）" },
+    "data": { "script": "scripts/attack.py", "callable": "attack_standard" }
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "demo_river:node:plain",
+    "type": "node",
+    "metadata": { "name": "平原格" },
+    "data": { "terrain": "demo_river:terrain:plain", "attributes": {} }
+  },
+  {
+    "id": "demo_river:node:hill",
+    "type": "node",
+    "metadata": { "name": "丘陵格" },
+    "data": { "terrain": "demo_river:terrain:hill", "attributes": {} }
+  },
+  {
+    "id": "demo_river:node:river",
+    "type": "node",
+    "metadata": { "name": "河格（不可进入）" },
+    "data": { "terrain": "demo_river:terrain:river", "attributes": {} }
+  },
+  {
+    "id": "demo_river:node:ford",
+    "type": "node",
+    "metadata": { "name": "渡口格" },
+    "data": { "terrain": "demo_river:terrain:ford", "attributes": {} }
+  },
+  {
+    "id": "demo_river:node:village",
+    "type": "node",
+    "metadata": { "name": "村庄格" },
+    "data": { "terrain": "demo_river:terrain:village", "attributes": {} }
+  },
+  {
+    "id": "demo_river:node:victory",
+    "type": "node",
+    "metadata": { "name": "胜利点（村庄格）" },
+    "data": { "terrain": "demo_river:terrain:victory", "attributes": {} }
+  }
+]

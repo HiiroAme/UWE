@@ -1,0 +1,9 @@
+{
+  "id": "pack_wargame_core",
+  "kind": "module",
+  "name": "兵棋基础动作",
+  "version": "0.0.0",
+  "description": "通用的移动与回合推进：单位停在哪、行动力在哪、每回合恢复多少，全部由 Mod 的参数给。服务在 data/ 里登记。",
+  "requires": { "pack_path_hex": ">=0.0.0" },
+  "capabilities": {}
+}

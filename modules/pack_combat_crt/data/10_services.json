@@ -1,0 +1,26 @@
+[
+  {
+    "id": "pack_combat_crt:service:attack",
+    "type": "service",
+    "metadata": { "name": "CRT 攻击结算（掷骰 → 查表 → 消灭 / 撤退 / 白打）" },
+    "data": { "script": "scripts/attack.py", "callable": "attack" }
+  },
+  {
+    "id": "pack_combat_crt:service:declare",
+    "type": "service",
+    "metadata": { "name": "声明一场战斗（入列 + 参战资格检查 + 标“打过仗”）" },
+    "data": { "script": "scripts/attack.py", "callable": "declare" }
+  },
+  {
+    "id": "pack_combat_crt:service:resolve_next",
+    "type": "service",
+    "metadata": { "name": "结算声明列表里的下一场，并把它出列" },
+    "data": { "script": "scripts/attack.py", "callable": "resolve_next" }
+  },
+  {
+    "id": "pack_combat_crt:service:advance",
+    "type": "service",
+    "metadata": { "name": "战后挺进（走进刚空出来的那一格）" },
+    "data": { "script": "scripts/attack.py", "callable": "advance" }
+  }
+]

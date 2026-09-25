@@ -1,0 +1,42 @@
+[
+  {
+    "id": "demo_river:command:select",
+    "type": "command",
+    "metadata": { "name": "选中单位" },
+    "data": {
+      "branches": [
+        {
+          "condition": ["exists", ["format", "/units/{0}", ["arg", "unit"]]],
+          "actions": [
+            { "action": "demo_river:action:select", "args": { "unit": ["arg", "unit"] } }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:command:preview",
+    "type": "command",
+    "metadata": { "name": "预览移动目标" },
+    "data": {
+      "branches": [
+        {
+          "condition": true,
+          "actions": [
+            { "action": "demo_river:action:preview", "args": { "to": ["arg", "to"] } }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:command:clear_selection",
+    "type": "command",
+    "metadata": { "name": "取消选中（固定拆解）" },
+    "data": {
+      "branches": [
+        { "condition": true, "actions": [{ "action": "demo_river:action:clear_selection" }] }
+      ]
+    }
+  }
+]

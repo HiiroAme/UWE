@@ -1,0 +1,31 @@
+[
+  {
+    "id": "demo_river:action:scroll_log",
+    "type": "action",
+    "metadata": { "name": "战报栏滚动（只改界面状态）" },
+    "data": {
+      "steps": [
+        {
+          "service": "demo_river:service:scroll_log",
+          "args": { "delta": ["arg", "delta"] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:action:open_rules",
+    "type": "action",
+    "metadata": { "name": "打开规则弹窗" },
+    "data": {
+      "steps": [{ "service": "demo_river:service:open_rules" }]
+    }
+  },
+  {
+    "id": "demo_river:action:close_rules",
+    "type": "action",
+    "metadata": { "name": "关闭规则弹窗 / 确认开局介绍" },
+    "data": {
+      "steps": [{ "service": "demo_river:service:close_rules" }]
+    }
+  }
+]

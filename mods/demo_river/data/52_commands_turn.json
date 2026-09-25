@@ -1,0 +1,80 @@
+[
+  {
+    "id": "demo_river:command:to_attack",
+    "type": "command",
+    "metadata": {
+      "name": "进入攻击阶段（固定拆解）"
+    },
+    "data": {
+      "branches": [
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_river:action:to_attack"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:command:begin_settle",
+    "type": "command",
+    "metadata": {
+      "name": "进入结算（固定拆解）"
+    },
+    "data": {
+      "branches": [
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_river:action:begin_settle"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:command:pass_control",
+    "type": "command",
+    "metadata": {
+      "name": "结束回合（固定拆解）"
+    },
+    "data": {
+      "branches": [
+        {
+          "condition": [
+            "==",
+            [
+              "get",
+              "/control_side"
+            ],
+            [
+              "get",
+              "/defender_side"
+            ]
+          ],
+          "actions": [
+            {
+              "action": "demo_river:action:pass_control"
+            },
+            {
+              "action": "demo_river:action:check_victory"
+            }
+          ]
+        },
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_river:action:pass_control"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "demo_river:action:select",
+    "type": "action",
+    "metadata": { "name": "选中单位" },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running",
+        "demo_river:rule:own_side",
+        "demo_river:rule:unit_alive"
+      ],
+      "steps": [
+        { "service": "demo_river:service:select", "args": { "unit": ["arg", "unit"] } }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:action:preview",
+    "type": "action",
+    "metadata": { "name": "预览移动目标" },
+    "data": {
+      "steps": [
+        { "service": "demo_river:service:preview", "args": { "to": ["arg", "to"] } }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:action:clear_selection",
+    "type": "action",
+    "metadata": { "name": "取消选中" },
+    "data": { "steps": [{ "service": "demo_river:service:clear_selection" }] }
+  }
+]

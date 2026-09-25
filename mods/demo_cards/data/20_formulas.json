@@ -1,0 +1,22 @@
+[
+  {
+    "id": "demo_cards:formula:hand_size",
+    "type": "formula",
+    "metadata": { "name": "手牌数（派生值）" },
+    "data": {
+      "target": "/hand_size",
+      "layer": 1,
+      "expression": ["len", ["get", "/hand"]]
+    }
+  },
+  {
+    "id": "demo_cards:formula:deck_size",
+    "type": "formula",
+    "metadata": { "name": "牌堆数（派生值）" },
+    "data": {
+      "target": "/deck_size",
+      "layer": 1,
+      "expression": ["len", ["get", "/deck"]]
+    }
+  }
+]

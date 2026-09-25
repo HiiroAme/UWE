@@ -1,0 +1,18 @@
+[
+  {
+    "id": "demo_river:input:declare_battle",
+    "type": "input",
+    "metadata": { "name": "声明一场战斗（参战单位 + 目标）" },
+    "data": {
+      "kind": "declare_battle",
+      "command": "demo_river:command:declare_battle",
+      "payload": { "units": ["arg", "units"], "target": ["arg", "target"] }
+    }
+  },
+  {
+    "id": "demo_river:input:resolve_next",
+    "type": "input",
+    "metadata": { "name": "结算下一场（界面上的「继续」按钮）" },
+    "data": { "kind": "resolve_next", "command": "demo_river:command:resolve_battle" }
+  }
+]

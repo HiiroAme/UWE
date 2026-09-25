@@ -1,0 +1,49 @@
+[
+  {
+    "id": "demo_river:action:camera_zoom",
+    "type": "action",
+    "metadata": { "name": "相机缩放" },
+    "data": {
+      "steps": [
+        {
+          "service": "pack_camera:service:zoom",
+          "args": { "delta": ["arg", "delta"] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:action:camera_pan",
+    "type": "action",
+    "metadata": { "name": "相机平移" },
+    "data": {
+      "steps": [
+        {
+          "service": "pack_camera:service:pan",
+          "args": { "delta": ["arg", "delta"] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:action:move",
+    "type": "action",
+    "metadata": { "name": "移动（移动阶段）" },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running",
+        "demo_river:rule:own_side",
+        "demo_river:rule:unit_alive",
+        "demo_river:rule:stage_is_move",
+        "demo_river:rule:not_disordered",
+        "demo_river:rule:has_move"
+      ],
+      "steps": [
+        {
+          "service": "demo_river:service:move",
+          "args": { "unit": ["arg", "unit"], "to": ["arg", "to"] }
+        }
+      ]
+    }
+  }
+]

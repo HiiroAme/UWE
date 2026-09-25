@@ -1,0 +1,31 @@
+{
+  "id": "demo_cards",
+  "name": "卡牌演示",
+  "version": "0.0.0",
+  "author": "引擎自带演示",
+  "description": "第二个演示：卡牌玩法。牌堆 / 手牌 / 弃牌堆都在 State 树里（场外变化，D-01），抽牌、出牌、结算回合、牌堆空了自动洗牌——玩法实现全部来自模块 pack_cards_basic，本 Mod 只写这一局的事实与排版，一个函数都不自己写。它证明同一套引擎机制能表达完全不同的玩法。",
+  "init": "scripts/init.py:build_state",
+  "scenario": "demo_cards_run",
+  "ui": "demo_cards:ui:table",
+  "uses": [
+    "pack_cards_basic>=0.0.0"
+  ],
+  "params": {
+    "deck_path": "/deck",
+    "hand_path": "/hand",
+    "discard_path": "/discard",
+    "card_types_path": "/card_types",
+    "energy_path": "/energy",
+    "score_path": "/score",
+    "played_path": "/played",
+    "deck_empty_path": "/deck_empty",
+    "turn_path": "/turn",
+    "max_energy_path": "/max_energy",
+    "log_path": "/log",
+    "drawn_event": "demo_cards:event:card_drawn",
+    "played_event": "demo_cards:event:card_played",
+    "empty_event": "demo_cards:event:deck_empty",
+    "turn_log": "第 {turn} 回合开始，能量回满"
+  },
+  "tags": ["演示", "卡牌", "场外变化"]
+}

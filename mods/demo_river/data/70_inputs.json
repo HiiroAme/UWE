@@ -1,0 +1,32 @@
+[
+  {
+    "id": "demo_river:input:wheel",
+    "type": "input",
+    "metadata": { "name": "滚轮：缩放地图" },
+    "data": {
+      "kind": "wheel",
+      "command": "demo_river:command:camera_zoom",
+      "payload": { "delta": ["arg", "delta"], "point": ["arg", "point"] }
+    }
+  },
+  {
+    "id": "demo_river:input:drag",
+    "type": "input",
+    "metadata": { "name": "按住左键拖动：平移地图" },
+    "data": {
+      "kind": "drag",
+      "command": "demo_river:command:camera_pan",
+      "payload": { "delta": ["arg", "delta"], "point": ["arg", "point"] }
+    }
+  },
+  {
+    "id": "demo_river:input:move",
+    "type": "input",
+    "metadata": { "name": "点格子：移动选中的单位" },
+    "data": {
+      "kind": "move",
+      "command": "demo_river:command:move",
+      "payload": { "unit": ["arg", "unit"], "to": ["arg", "to"] }
+    }
+  }
+]

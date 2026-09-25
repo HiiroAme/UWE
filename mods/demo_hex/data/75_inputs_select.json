@@ -1,0 +1,12 @@
+[
+  {
+    "id": "demo_hex:input:select",
+    "type": "input",
+    "metadata": { "name": "点击自己的单位：选中" },
+    "data": {
+      "kind": "select",
+      "command": "demo_hex:command:select",
+      "payload": { "unit": ["arg", "unit"] }
+    }
+  }
+]

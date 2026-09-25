@@ -1,0 +1,58 @@
+[
+  {
+    "id": "demo_cards:command:draw",
+    "type": "command",
+    "metadata": { "name": "抽牌" },
+    "data": {
+      "branches": [
+        {
+          "condition": ["and",
+                        ["<", ["len", ["get", "/hand"]], ["get", "/hand_limit"]],
+                        [">", ["len", ["get", "/deck"]], 0]],
+          "actions": [{ "action": "demo_cards:action:draw" }]
+        },
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_cards:action:report_rejected",
+              "args": { "text": "抽不了：手牌已满或者牌堆空了" }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_cards:command:play",
+    "type": "command",
+    "metadata": { "name": "出牌" },
+    "data": {
+      "branches": [
+        {
+          "condition": ["exists", ["format", "/hand/{0}", ["arg", "index"]]],
+          "actions": [
+            { "action": "demo_cards:action:play", "args": { "index": ["arg", "index"] } }
+          ]
+        },
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_cards:action:report_rejected",
+              "args": { "text": ["format", "出牌被忽略：手上没有第 {0} 张牌", ["arg", "index"]] }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_cards:command:end_turn",
+    "type": "command",
+    "metadata": { "name": "结束回合（固定拆解）" },
+    "data": {
+      "branches": [{ "condition": true, "actions": [{ "action": "demo_cards:action:end_turn" }] }]
+    }
+  }
+]

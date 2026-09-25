@@ -1,0 +1,9 @@
+{
+  "id": "pack_cards_basic",
+  "kind": "module",
+  "name": "基础卡牌",
+  "version": "0.0.0",
+  "author": "引擎自带模块",
+  "description": "牌堆 / 手牌 / 弃牌堆这一套最常见的卡牌动作：抽牌、出牌、洗牌、结束回合。哪条路径是牌堆、扣哪条量、抛什么事件、战报怎么写，全部由 Mod 的参数给——模块不认识任何具体的 State 形状。服务在 data/ 里登记。",
+  "capabilities": {}
+}

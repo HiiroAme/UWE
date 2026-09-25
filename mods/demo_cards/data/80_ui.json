@@ -1,0 +1,12 @@
+[
+  {
+    "id": "demo_cards:ui:table",
+    "type": "ui",
+    "metadata": { "name": "牌桌" },
+    "data": {
+      "script": "scripts/ui_table.py",
+      "callable": "build_view",
+      "title": "牌桌"
+    }
+  }
+]

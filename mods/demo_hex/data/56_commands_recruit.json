@@ -1,0 +1,32 @@
+[
+  {
+    "id": "demo_hex:command:recruit",
+    "type": "command",
+    "metadata": { "name": "招募一个单位" },
+    "data": {
+      "branches": [
+        {
+          "condition": [
+            "not",
+            ["exists", ["format", "/units/{0}", ["arg", "unit"]]]
+          ],
+          "actions": [
+            {
+              "action": "demo_hex:action:recruit",
+              "args": { "unit": ["arg", "unit"], "side": ["arg", "side"], "at": ["arg", "at"] }
+            }
+          ]
+        },
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_hex:action:report_rejected",
+              "args": { "text": ["format", "招募被忽略：单位 {0} 已经存在", ["arg", "unit"]] }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

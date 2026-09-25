@@ -1,0 +1,9 @@
+{
+  "id": "pack_camera",
+  "kind": "module",
+  "name": "界面相机",
+  "version": "0.0.0",
+  "author": "引擎自带模块",
+  "description": "大地图的界面相机：滚轮缩放（围绕屏幕中心）+ 拖动平移。相机值放在 Context（界面状态、不进存档），键名前缀、缩放上下限与步长都由调用方给——模块不认识任何具体玩法。",
+  "capabilities": {}
+}

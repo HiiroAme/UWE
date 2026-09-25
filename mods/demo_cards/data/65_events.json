@@ -1,0 +1,17 @@
+[
+  {
+    "id": "demo_cards:event:card_drawn",
+    "type": "event",
+    "data": { "description": "抽到一张牌" }
+  },
+  {
+    "id": "demo_cards:event:card_played",
+    "type": "event",
+    "data": { "description": "打出一张牌" }
+  },
+  {
+    "id": "demo_cards:event:deck_empty",
+    "type": "event",
+    "data": { "description": "牌堆被抽空" }
+  }
+]

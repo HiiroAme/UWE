@@ -1,0 +1,42 @@
+# Python 虚拟环境（最重要！）
+venv/
+__pycache__/
+*.pyc
+
+# IDE 配置（你用的是 PyCharm/IDEA，这些不需要提交）
+.idea/
+.roo/
+
+# 日志和临时文件
+logs/
+*.log
+
+# 运行产物
+saves/
+dist/
+build/
+tests/_scratch/
+
+# 编辑器/IDE
+.vscode/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 如果你有本地配置文件或密钥
+*.local
+*.env
+
+# 参考素材 / 历史档案 / 回收站：不进版本库（第三方资源一律不提交）
+plans/垃圾桶/
+plans/wargame/
+plans/**/*.pdf
+
+# 字体：本项目不分发任何字体，第三方字体一律不进库
+*.ttc
+*.ttf
+*.otf
+
+# 本地归档（挪出仓库前的临时存放）
+_archive/

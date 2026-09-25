@@ -1,0 +1,14 @@
+[
+  {
+    "id": "demo_hex:terrain:plain",
+    "type": "terrain",
+    "metadata": { "name": "平原" },
+    "data": {
+      "attributes": {
+        "terrain": "plain",
+        "move_cost": 1,
+        "cover": 0
+      }
+    }
+  }
+]

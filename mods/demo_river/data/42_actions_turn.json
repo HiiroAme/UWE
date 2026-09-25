@@ -1,0 +1,93 @@
+[
+  {
+    "id": "demo_river:action:to_attack",
+    "type": "action",
+    "metadata": {
+      "name": "进入攻击阶段（固定拆解）"
+    },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running"
+      ],
+      "steps": [
+        {
+          "service": "demo_river:service:to_attack"
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:action:begin_settle",
+    "type": "action",
+    "metadata": {
+      "name": "进入结算（固定拆解）"
+    },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running",
+        "demo_river:rule:stage_is_attack",
+        "demo_river:rule:has_pending_battles"
+      ],
+      "steps": [
+        {
+          "service": "demo_river:service:begin_settle"
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:action:pass_control",
+    "type": "action",
+    "metadata": {
+      "name": "结束回合，交给对方（固定拆解）"
+    },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running",
+        "demo_river:rule:stage_is_attack",
+        "demo_river:rule:no_pending_battles"
+      ],
+      "steps": [
+        {
+          "service": "demo_river:service:pass_control"
+        },
+        {
+          "service": "pack_wargame_core:service:begin_side",
+          "args": {
+            "side": [
+              "get",
+              "/control_side"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:action:check_victory",
+    "type": "action",
+    "metadata": {
+      "name": "大回合末判胜负（固定拆解）"
+    },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running"
+      ],
+      "steps": [
+        {
+          "service": "pack_wargame_core:service:check_victory",
+          "args": {
+            "attacker_side": [
+              "get",
+              "/attacker_side"
+            ],
+            "defender_side": [
+              "get",
+              "/defender_side"
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

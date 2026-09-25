@@ -1,0 +1,16 @@
+[
+  {
+    "id": "demo_hex:input:recruit",
+    "type": "input",
+    "metadata": { "name": "招募：按模板新建一个单位" },
+    "data": {
+      "kind": "recruit",
+      "command": "demo_hex:command:recruit",
+      "payload": {
+        "unit": ["arg", "unit"],
+        "side": ["arg", "side"],
+        "at": ["arg", "at"]
+      }
+    }
+  }
+]

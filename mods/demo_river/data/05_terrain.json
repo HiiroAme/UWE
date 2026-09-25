@@ -1,0 +1,98 @@
+[
+  {
+    "id": "demo_river:terrain:plain",
+    "type": "terrain",
+    "metadata": { "name": "平原" },
+    "data": {
+      "attributes": {
+        "terrain": "plain",
+        "terrain_name": "平原",
+        "move_cost": 1,
+        "defense_mult": 1,
+        "passable": true,
+        "ford": false,
+        "victory": false
+      }
+    }
+  },
+  {
+    "id": "demo_river:terrain:hill",
+    "type": "terrain",
+    "metadata": { "name": "丘陵（移动 ×2、防守 ×2）" },
+    "data": {
+      "attributes": {
+        "terrain": "hill",
+        "terrain_name": "丘陵",
+        "move_cost": 2,
+        "defense_mult": 2,
+        "passable": true,
+        "ford": false,
+        "victory": false
+      }
+    }
+  },
+  {
+    "id": "demo_river:terrain:river",
+    "type": "terrain",
+    "metadata": { "name": "白鹭河（不可进入）" },
+    "data": {
+      "attributes": {
+        "terrain": "river",
+        "terrain_name": "河流",
+        "move_cost": 0,
+        "defense_mult": 1,
+        "passable": false,
+        "ford": false,
+        "victory": false
+      }
+    }
+  },
+  {
+    "id": "demo_river:terrain:ford",
+    "type": "terrain",
+    "metadata": { "name": "渡口（两岸成对，渡河 3 点）" },
+    "data": {
+      "attributes": {
+        "terrain": "ford",
+        "terrain_name": "渡口",
+        "move_cost": 1,
+        "defense_mult": 1,
+        "passable": true,
+        "ford": true,
+        "victory": false
+      }
+    }
+  },
+  {
+    "id": "demo_river:terrain:village",
+    "type": "terrain",
+    "metadata": { "name": "柳浦村（防守 ×2）" },
+    "data": {
+      "attributes": {
+        "terrain": "village",
+        "terrain_name": "村庄",
+        "move_cost": 1,
+        "defense_mult": 2,
+        "passable": true,
+        "ford": false,
+        "victory": false
+      }
+    }
+  },
+  {
+    "id": "demo_river:terrain:victory",
+    "type": "terrain",
+    "metadata": { "name": "胜利点（村庄地块，防守 ×2）" },
+    "data": {
+      "attributes": {
+        "terrain": "victory",
+        "terrain_name": "胜利点",
+        "move_cost": 1,
+        "defense_mult": 2,
+        "passable": true,
+        "ford": false,
+        "victory": true
+      }
+    }
+  }
+]

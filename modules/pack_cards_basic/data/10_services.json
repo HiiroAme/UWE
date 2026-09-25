@@ -1,0 +1,26 @@
+[
+  {
+    "id": "pack_cards_basic:service:draw_card",
+    "type": "service",
+    "metadata": { "name": "抽一张牌（牌堆顶 → 手牌）" },
+    "data": { "script": "scripts/cards.py", "callable": "draw_card" }
+  },
+  {
+    "id": "pack_cards_basic:service:play_card",
+    "type": "service",
+    "metadata": { "name": "打出一张手牌（进弃牌堆、扣能量、加分）" },
+    "data": { "script": "scripts/cards.py", "callable": "play_card" }
+  },
+  {
+    "id": "pack_cards_basic:service:reshuffle",
+    "type": "service",
+    "metadata": { "name": "把弃牌堆洗回牌堆（用引擎随机，可复现）" },
+    "data": { "script": "scripts/cards.py", "callable": "reshuffle" }
+  },
+  {
+    "id": "pack_cards_basic:service:advance_turn",
+    "type": "service",
+    "metadata": { "name": "结束回合（回合 +1、能量回满）" },
+    "data": { "script": "scripts/turn.py", "callable": "advance_turn" }
+  }
+]

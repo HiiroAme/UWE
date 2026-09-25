@@ -1,0 +1,22 @@
+[
+  {
+    "id": "demo_hex:trigger:refresh_after_move",
+    "type": "trigger",
+    "metadata": { "name": "有人移动 → 重算派生值" },
+    "data": {
+      "event": "demo_hex:event:unit_moved",
+      "order": 10,
+      "actions": [{ "action": "demo_hex:action:refresh_derived" }]
+    }
+  },
+  {
+    "id": "demo_hex:trigger:refresh_after_attack",
+    "type": "trigger",
+    "metadata": { "name": "有人挨打 → 重算派生值" },
+    "data": {
+      "event": "demo_hex:event:unit_attacked",
+      "order": 10,
+      "actions": [{ "action": "demo_hex:action:refresh_derived" }]
+    }
+  }
+]

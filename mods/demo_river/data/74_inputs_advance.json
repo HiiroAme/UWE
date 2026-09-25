@@ -1,0 +1,12 @@
+[
+  {
+    "id": "demo_river:input:advance",
+    "type": "input",
+    "metadata": { "name": "点参战单位：战后挺进" },
+    "data": {
+      "kind": "advance",
+      "command": "demo_river:command:advance",
+      "payload": { "unit": ["arg", "unit"] }
+    }
+  }
+]

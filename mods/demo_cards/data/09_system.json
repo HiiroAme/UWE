@@ -1,0 +1,17 @@
+[
+  {
+    "id": "demo_cards:system:defaults",
+    "type": "system",
+    "metadata": { "name": "全局参数初始值" },
+    "data": {
+      "state": {
+        "/turn": 1,
+        "/energy": 3,
+        "/max_energy": 3,
+        "/score": 0,
+        "/played": 0,
+        "/hand_limit": 5
+      }
+    }
+  }
+]

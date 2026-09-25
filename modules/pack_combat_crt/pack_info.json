@@ -1,0 +1,21 @@
+{
+  "id": "pack_combat_crt",
+  "kind": "module",
+  "name": "战斗结果表（CRT）",
+  "version": "0.0.0",
+  "requires": { "pack_path_hex": ">=0.0.0" },
+  "author": "引擎自带模块",
+  "description": "按攻防比查战斗结果表的纯函数：档位（不整除按对守方有利取整、不足最低档不许打）→ 1d6 → 结果码（DE/AE/A1~A3/D1~D3/O）→ 效果（消灭 / 撤退几格）。骰子由调用方掷（服务里走引擎随机），模块只负责查表与翻译。",
+  "capabilities": {
+    "crt": {
+      "kind": "function",
+      "script": "scripts/crt.py",
+      "variants": {
+        "basic": "resolve",
+        "effects": "result_effects",
+        "table": "table"
+      },
+      "default": "basic"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "demo_cards:rule:hand_not_full",
+    "type": "rule",
+    "metadata": { "name": "手牌没满" },
+    "data": {
+      "condition": ["<", ["len", ["get", "/hand"]], ["get", "/hand_limit"]],
+      "message": "手牌已满"
+    }
+  },
+  {
+    "id": "demo_cards:rule:card_in_hand",
+    "type": "rule",
+    "metadata": { "name": "这张牌确实在手上" },
+    "data": {
+      "condition": ["exists", ["format", "/hand/{0}", ["arg", "index"]]],
+      "message": "手上没有这张牌"
+    }
+  },
+  {
+    "id": "demo_cards:rule:enough_energy",
+    "type": "rule",
+    "metadata": { "name": "能量够" },
+    "data": {
+      "condition": [
+        ">=",
+        ["get", "/energy"],
+        ["get", ["format", "/card_types/{0}/cost",
+                 ["get", ["format", "/hand/{0}", ["arg", "index"]]]]]
+      ],
+      "message": "能量不足"
+    }
+  }
+]

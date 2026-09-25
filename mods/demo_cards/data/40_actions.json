@@ -1,0 +1,56 @@
+[
+  {
+    "id": "demo_cards:action:draw",
+    "type": "action",
+    "metadata": { "name": "抽一张牌" },
+    "data": {
+      "rules": ["demo_cards:rule:hand_not_full"],
+      "steps": [{ "service": "pack_cards_basic:service:draw_card" }]
+    }
+  },
+  {
+    "id": "demo_cards:action:play",
+    "type": "action",
+    "metadata": { "name": "打出一张牌" },
+    "data": {
+      "rules": ["demo_cards:rule:card_in_hand", "demo_cards:rule:enough_energy"],
+      "steps": [
+        {
+          "service": "pack_cards_basic:service:play_card",
+          "args": { "index": ["arg", "index"] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_cards:action:end_turn",
+    "type": "action",
+    "metadata": { "name": "结束回合" },
+    "data": { "steps": [{ "service": "pack_cards_basic:service:advance_turn" }] }
+  },
+  {
+    "id": "demo_cards:action:reshuffle",
+    "type": "action",
+    "metadata": { "name": "洗牌（由触发调用）" },
+    "data": { "steps": [{ "service": "pack_cards_basic:service:reshuffle" }] }
+  },
+  {
+    "id": "demo_cards:action:report_rejected",
+    "type": "action",
+    "metadata": { "name": "记一条被忽略的说明" },
+    "data": {
+      "steps": [
+        {
+          "service": "pack_common:service:log_append",
+          "args": { "text": ["arg", "text"] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_cards:action:refresh_derived",
+    "type": "action",
+    "metadata": { "name": "重算派生值（调用引擎原子服务）" },
+    "data": { "steps": [{ "service": "engine:service:refresh_derived" }] }
+  }
+]

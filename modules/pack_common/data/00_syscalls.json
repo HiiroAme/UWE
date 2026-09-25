@@ -1,0 +1,38 @@
+[
+  {
+    "id": "engine:syscall:save",
+    "type": "syscall",
+    "metadata": { "name": "保存" },
+    "data": { "handler": "save" }
+  },
+  {
+    "id": "engine:syscall:quit",
+    "type": "syscall",
+    "metadata": { "name": "退出" },
+    "data": { "handler": "quit" }
+  },
+  {
+    "id": "engine:syscall:back_to_menu",
+    "type": "syscall",
+    "metadata": { "name": "返回首页" },
+    "data": { "handler": "back_to_menu" }
+  },
+  {
+    "id": "engine:syscall:autosave",
+    "type": "syscall",
+    "metadata": { "name": "（自动）保存" },
+    "data": { "handler": "autosave" }
+  },
+  {
+    "id": "engine:syscall:cleanup",
+    "type": "syscall",
+    "metadata": { "name": "清理内存" },
+    "data": { "handler": "cleanup" }
+  },
+  {
+    "id": "engine:syscall:reload_mod",
+    "type": "syscall",
+    "metadata": { "name": "重载 Mod" },
+    "data": { "handler": "reload_mod" }
+  }
+]

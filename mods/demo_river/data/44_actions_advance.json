@@ -1,0 +1,26 @@
+[
+  {
+    "id": "demo_river:action:advance",
+    "type": "action",
+    "metadata": {
+      "name": "战后挺进（可选）"
+    },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running",
+        "demo_river:rule:stage_is_attack"
+      ],
+      "steps": [
+        {
+          "service": "pack_combat_crt:service:advance",
+          "args": {
+            "unit": [
+              "arg",
+              "unit"
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

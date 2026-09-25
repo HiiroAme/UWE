@@ -1,0 +1,50 @@
+{
+  "id": "demo_river",
+  "name": "白鹭河遭遇战（示例兵棋）",
+  "version": "0.0.0",
+  "author": "引擎自带示例",
+  "description": "进阶示例：700 格六边形大地图、CRT 战斗结果表、控制区、渡河、混乱与战后挺进。它演示\"一个真实一点的兵棋怎么写\"，同时用来把引擎的系统性不足一条条找出来（设计与缺口清单见 plans/新架构细节/04_示例Mod/示例Mod.md）。",
+  "init": "scripts/init.py:build_state",
+  "scenario": "demo_river_luochuan",
+  "ui": "demo_river:ui:battle",
+  "menu": [
+    { "label": "规则", "input": "open_rules" }
+  ],
+  "uses": [
+    "pack_hex_grid>=0.0.0",
+    "pack_path_hex>=0.0.0",
+    "pack_combat_crt>=0.0.0",
+    "pack_wargame_core>=0.0.0",
+    "pack_camera>=0.0.0"
+  ],
+  "params": {
+    "map_path": "maps/luo_chuan.txt",
+    "forces_path": "setup/forces.json",
+    "intro_path": "setup/intro.json",
+    "map_codes": { "river": "r", "ford": "f" },
+    "ford_cost": 3,
+    "defense_mult_path": "/nodes/{node}/defense_mult",
+    "node_path": "/units/{target}/at",
+    "log_path": "/log",
+    "report_path": "/battle_report",
+    "fords_path": "/fords",
+    "adjacency_path": "/adjacency",
+    "state_prefix": "demo_river.camera",
+    "turn_limit": 12,
+    "attacker_side": "north",
+    "defender_side": "south",
+    "win_point_message": "攻方拿下柳浦村胜利点",
+    "win_defender_wiped_message": "守方已被全歼",
+    "win_attacker_wiped_message": "攻方已被全歼",
+    "win_timeout_message": "第 {limit} 回合已过，守方守住了柳浦村",
+    "terrain_codes": {
+      "p": "demo_river:node:plain",
+      "h": "demo_river:node:hill",
+      "r": "demo_river:node:river",
+      "f": "demo_river:node:ford",
+      "v": "demo_river:node:village",
+      "V": "demo_river:node:victory"
+    }
+  },
+  "tags": ["示例", "兵棋", "CRT", "控制区", "渡河"]
+}

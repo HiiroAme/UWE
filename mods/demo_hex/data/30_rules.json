@@ -1,0 +1,92 @@
+[
+  {
+    "id": "demo_hex:rule:battle_running",
+    "type": "rule",
+    "metadata": { "name": "战斗还没结束" },
+    "data": {
+      "condition": ["==", ["get", "/game_over"], false],
+      "message": "战斗已经结束，不能再操作了"
+    }
+  },
+  {
+    "id": "demo_hex:rule:own_side",
+    "type": "rule",
+    "metadata": { "name": "只能操作当前控制方的单位" },
+    "data": {
+      "condition": [
+        "==",
+        ["get", ["format", "/units/{0}/side", ["arg", "unit"]]],
+        ["get", "/control_side"]
+      ],
+      "message": "现在不是这一方在行动（点“结束回合”交给对方）"
+    }
+  },
+  {
+    "id": "demo_hex:rule:unit_alive",
+    "type": "rule",
+    "metadata": { "name": "单位还活着" },
+    "data": {
+      "condition": [">", ["get", ["format", "/units/{0}/hp", ["arg", "unit"]]], 0],
+      "message": "这个单位已经被击毁"
+    }
+  },
+  {
+    "id": "demo_hex:rule:has_ap",
+    "type": "rule",
+    "metadata": { "name": "还有行动力" },
+    "data": {
+      "condition": [">", ["get", ["format", "/units/{0}/ap", ["arg", "unit"]]], 0],
+      "message": "行动力不足"
+    }
+  },
+  {
+    "id": "demo_hex:rule:target_adjacent",
+    "type": "rule",
+    "metadata": { "name": "目标格子相邻" },
+    "data": {
+      "condition": [
+        "call",
+        "adjacent",
+        ["get", ["format", "/adjacency/{0}", ["get", ["format", "/units/{0}/at", ["arg", "unit"]]]]],
+        ["arg", "to"]
+      ],
+      "message": "目标格子与当前位置不相邻"
+    }
+  },
+  {
+    "id": "demo_hex:rule:enemy_target",
+    "type": "rule",
+    "metadata": { "name": "目标必须是敌军" },
+    "data": {
+      "condition": [
+        "!=",
+        ["get", ["format", "/units/{0}/side", ["arg", "unit"]]],
+        ["get", ["format", "/units/{0}/side", ["arg", "target"]]]
+      ],
+      "message": "不能攻击友军"
+    }
+  },
+  {
+    "id": "demo_hex:rule:target_alive",
+    "type": "rule",
+    "metadata": { "name": "目标还活着" },
+    "data": {
+      "condition": [">", ["get", ["format", "/units/{0}/hp", ["arg", "target"]]], 0],
+      "message": "目标已经被击毁"
+    }
+  },
+  {
+    "id": "demo_hex:rule:unit_adjacent",
+    "type": "rule",
+    "metadata": { "name": "行动单位与目标相邻" },
+    "data": {
+      "condition": [
+        "call",
+        "adjacent",
+        ["get", ["format", "/adjacency/{0}", ["get", ["format", "/units/{0}/at", ["arg", "unit"]]]]],
+        ["get", ["format", "/units/{0}/at", ["arg", "target"]]]
+      ],
+      "message": "行动单位与目标不相邻"
+    }
+  }
+]

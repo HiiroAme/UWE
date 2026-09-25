@@ -1,0 +1,13 @@
+[
+  {
+    "id": "demo_hex:node:plain",
+    "type": "node",
+    "metadata": { "name": "平原格" },
+    "data": {
+      "terrain": "demo_hex:terrain:plain",
+      "attributes": {
+        "move_cost": 1
+      }
+    }
+  }
+]

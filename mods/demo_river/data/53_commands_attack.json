@@ -1,0 +1,30 @@
+[
+  {
+    "id": "demo_river:command:declare_battle",
+    "type": "command",
+    "metadata": { "name": "声明一场战斗" },
+    "data": {
+      "branches": [
+        {
+          "condition": ["exists", ["format", "/units/{0}", ["arg", "target"]]],
+          "actions": [
+            {
+              "action": "demo_river:action:declare_battle",
+              "args": { "units": ["arg", "units"], "target": ["arg", "target"] }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:command:resolve_battle",
+    "type": "command",
+    "metadata": { "name": "结算下一场（没有声明 / 目标已经不在就跳过）" },
+    "data": {
+      "branches": [
+        { "condition": true, "actions": [{ "action": "demo_river:action:resolve_battle" }] }
+      ]
+    }
+  }
+]

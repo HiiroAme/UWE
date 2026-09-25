@@ -1,0 +1,34 @@
+[
+  {
+    "id": "demo_hex:input:move",
+    "type": "input",
+    "metadata": { "name": "点击相邻格子：移动" },
+    "data": {
+      "kind": "move",
+      "command": "demo_hex:command:move",
+      "payload": { "unit": ["arg", "unit"], "to": ["arg", "to"] }
+    }
+  },
+  {
+    "id": "demo_hex:input:attack",
+    "type": "input",
+    "metadata": { "name": "点击敌军：攻击" },
+    "data": {
+      "kind": "attack",
+      "command": "demo_hex:command:attack",
+      "payload": { "unit": ["arg", "unit"], "target": ["arg", "target"] }
+    }
+  },
+  {
+    "id": "demo_hex:input:end_turn",
+    "type": "input",
+    "metadata": { "name": "结束回合" },
+    "data": { "kind": "end_turn", "command": "demo_hex:command:end_turn" }
+  },
+  {
+    "id": "demo_hex:input:clear_selection",
+    "type": "input",
+    "metadata": { "name": "点空地：取消选中" },
+    "data": { "kind": "clear_selection", "command": "demo_hex:command:clear_selection" }
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "demo_river:command:camera_zoom",
+    "type": "command",
+    "metadata": { "name": "滚轮：缩放（固定拆解）" },
+    "data": {
+      "branches": [
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_river:action:camera_zoom",
+              "args": { "delta": ["arg", "delta"], "point": ["arg", "point"] }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:command:camera_pan",
+    "type": "command",
+    "metadata": { "name": "拖动：平移（固定拆解）" },
+    "data": {
+      "branches": [
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_river:action:camera_pan",
+              "args": { "delta": ["arg", "delta"], "point": ["arg", "point"] }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_river:command:move",
+    "type": "command",
+    "metadata": { "name": "移动单位" },
+    "data": {
+      "branches": [
+        {
+          "condition": ["exists", ["format", "/units/{0}", ["arg", "unit"]]],
+          "actions": [
+            {
+              "action": "demo_river:action:move",
+              "args": { "unit": ["arg", "unit"], "to": ["arg", "to"] }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

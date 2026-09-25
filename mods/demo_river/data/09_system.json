@@ -1,0 +1,17 @@
+[
+  {
+    "id": "demo_river:system:defaults",
+    "type": "system",
+    "metadata": { "name": "全局参数的初始值" },
+    "data": {
+      "state": {
+        "/turn": 1,
+        "/control_side": "north",
+        "/stage": "move",
+        "/settling": false,
+        "/game_over": false,
+        "/winner": ""
+      }
+    }
+  }
+]

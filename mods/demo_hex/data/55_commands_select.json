@@ -1,0 +1,24 @@
+[
+  {
+    "id": "demo_hex:command:select",
+    "type": "command",
+    "metadata": { "name": "选中一个单位" },
+    "data": {
+      "branches": [
+        {
+          "condition": ["exists", ["format", "/units/{0}", ["arg", "unit"]]],
+          "actions": [{ "action": "demo_hex:action:select", "args": { "unit": ["arg", "unit"] } }]
+        },
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_hex:action:report_rejected",
+              "args": { "text": ["format", "选不中：单位 {0} 不存在", ["arg", "unit"]] }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

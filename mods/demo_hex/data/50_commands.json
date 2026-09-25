@@ -1,0 +1,78 @@
+[
+  {
+    "id": "demo_hex:command:move",
+    "type": "command",
+    "metadata": { "name": "移动单位" },
+    "data": {
+      "branches": [
+        {
+          "condition": ["exists", ["format", "/units/{0}", ["arg", "unit"]]],
+          "actions": [
+            { "action": "demo_hex:action:move", "args": { "unit": ["arg", "unit"], "to": ["arg", "to"] } }
+          ]
+        },
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_hex:action:report_rejected",
+              "args": { "text": ["format", "移动被忽略：单位 {0} 不存在", ["arg", "unit"]] }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_hex:command:attack",
+    "type": "command",
+    "metadata": { "name": "发起攻击" },
+    "data": {
+      "branches": [
+        {
+          "condition": [
+            "and",
+            ["exists", ["format", "/units/{0}", ["arg", "unit"]]],
+            ["exists", ["format", "/units/{0}", ["arg", "target"]]]
+          ],
+          "actions": [
+            {
+              "action": "demo_hex:action:attack",
+              "args": { "unit": ["arg", "unit"], "target": ["arg", "target"] }
+            }
+          ]
+        },
+        {
+          "condition": true,
+          "actions": [
+            {
+              "action": "demo_hex:action:report_rejected",
+              "args": { "text": ["format", "攻击被忽略：单位 {0} 或目标 {1} 不存在",
+                                  ["arg", "unit"], ["arg", "target"]] }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_hex:command:end_turn",
+    "type": "command",
+    "metadata": { "name": "结束回合（固定拆解）" },
+    "data": {
+      "branches": [
+        { "condition": true, "actions": [{ "action": "demo_hex:action:end_turn" }] }
+      ]
+    }
+  },
+  {
+    "id": "demo_hex:command:clear_selection",
+    "type": "command",
+    "metadata": { "name": "取消选中（固定拆解）" },
+    "data": {
+      "branches": [
+        { "condition": true, "actions": [{ "action": "demo_hex:action:clear_selection" }] }
+      ]
+    }
+  }
+]

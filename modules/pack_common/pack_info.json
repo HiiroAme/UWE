@@ -1,0 +1,10 @@
+{
+  "id": "pack_common",
+  "kind": "module",
+  "name": "通用内核内容",
+  "version": "0.0.0",
+  "base": true,
+  "author": "引擎自带模块",
+  "description": "随引擎分发的那份内容：系统事件（保存 / 退出 / 返回首页 / 自动保存 / 清理内存 / 重载 Mod）的登记，以及通用工具服务（往列表追一行）。它声明 base=true，所以每个 Mod 都自动带上、不必写进 uses；引擎源码树里因此不再有任何内置内容目录。",
+  "capabilities": {}
+}

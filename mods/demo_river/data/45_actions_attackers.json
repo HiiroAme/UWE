@@ -1,0 +1,30 @@
+[
+  {
+    "id": "demo_river:action:toggle_attacker",
+    "type": "action",
+    "metadata": {
+      "name": "加入 / 移出参战名单"
+    },
+    "data": {
+      "rules": [
+        "demo_river:rule:battle_running",
+        "demo_river:rule:stage_is_attack",
+        "demo_river:rule:not_settling",
+        "demo_river:rule:own_side",
+        "demo_river:rule:unit_alive",
+        "demo_river:rule:not_disordered"
+      ],
+      "steps": [
+        {
+          "service": "demo_river:service:toggle_attacker",
+          "args": {
+            "unit": [
+              "arg",
+              "unit"
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

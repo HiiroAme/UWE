@@ -1,0 +1,12 @@
+[
+  {
+    "id": "demo_hex:ui:battle",
+    "type": "ui",
+    "metadata": { "name": "战场" },
+    "data": {
+      "script": "scripts/ui_battle.py",
+      "callable": "build_view",
+      "title": "战场"
+    }
+  }
+]

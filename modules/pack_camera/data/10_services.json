@@ -1,0 +1,14 @@
+[
+  {
+    "id": "pack_camera:service:zoom",
+    "type": "service",
+    "metadata": { "name": "相机缩放（滚轮）" },
+    "data": { "script": "scripts/camera.py", "callable": "zoom" }
+  },
+  {
+    "id": "pack_camera:service:pan",
+    "type": "service",
+    "metadata": { "name": "相机平移（拖动）" },
+    "data": { "script": "scripts/camera.py", "callable": "pan" }
+  }
+]

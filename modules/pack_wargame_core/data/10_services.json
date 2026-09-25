@@ -1,0 +1,26 @@
+[
+  {
+    "id": "pack_wargame_core:service:move",
+    "type": "service",
+    "metadata": { "name": "移动单位（检查占位与相邻，扣行动力）" },
+    "data": { "script": "scripts/actions.py", "callable": "move_unit" }
+  },
+  {
+    "id": "pack_wargame_core:service:advance_turn",
+    "type": "service",
+    "metadata": { "name": "推进一个回合（回合 +1、行动力恢复）" },
+    "data": { "script": "scripts/actions.py", "callable": "advance_turn" }
+  },
+  {
+    "id": "pack_wargame_core:service:begin_side",
+    "type": "service",
+    "metadata": { "name": "一方回合开始：恢复行动力、刷新控制区标记、清掉“本回合已打过”" },
+    "data": { "script": "scripts/turn.py", "callable": "begin_side" }
+  },
+  {
+    "id": "pack_wargame_core:service:check_victory",
+    "type": "service",
+    "metadata": { "name": "回合末判定：占点 / 一方全灭 / 到回合上限" },
+    "data": { "script": "scripts/turn.py", "callable": "check_victory" }
+  }
+]

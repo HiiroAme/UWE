@@ -1,0 +1,109 @@
+{
+  "id": "pack_hex_grid",
+  "kind": "module",
+  "name": "六边形网格",
+  "version": "0.0.0",
+  "description": "六边形的键、相邻、距离、半径内的格子、像素换算与相邻关系表，行列 ↔ 轴向坐标的换算与字符地图解析/校验，以及把一组节点画成网格的界面件（方块格子与真六边形两种画法）。Mod 只需要声明坐标，不必自己写几何与画法。",
+  "capabilities": {
+    "node_key": {
+      "kind": "function",
+      "script": "scripts/hex_math.py",
+      "variants": { "q_r": "key_q_r" },
+      "default": "q_r"
+    },
+    "parse_key": {
+      "kind": "function",
+      "script": "scripts/hex_math.py",
+      "variants": { "q_r": "parse_key_q_r" },
+      "default": "q_r"
+    },
+    "neighbors": {
+      "kind": "function",
+      "script": "scripts/hex_math.py",
+      "variants": { "hex": "neighbors_hex" },
+      "default": "hex"
+    },
+    "distance": {
+      "kind": "function",
+      "script": "scripts/hex_math.py",
+      "variants": { "hex": "distance_hex" },
+      "default": "hex"
+    },
+    "all_within": {
+      "kind": "function",
+      "script": "scripts/hex_math.py",
+      "variants": { "hex": "all_within_hex" },
+      "default": "hex"
+    },
+    "to_pixel": {
+      "kind": "function",
+      "script": "scripts/hex_canvas.py",
+      "variants": { "hex_pointy": "to_pixel_hex_pointy" },
+      "default": "hex_pointy"
+    },
+    "hex_points": {
+      "kind": "function",
+      "script": "scripts/hex_canvas.py",
+      "variants": { "at": "hexagon_points_at" },
+      "default": "at"
+    },
+    "adjacency_map": {
+      "kind": "function",
+      "script": "scripts/hex_math.py",
+      "variants": { "from_coords": "adjacency_map_from_coords" },
+      "default": "from_coords"
+    },
+    "offset": {
+      "kind": "function",
+      "script": "scripts/hex_text_map.py",
+      "variants": {
+        "to_axial": "offset_to_axial",
+        "to_offset": "axial_to_offset"
+      },
+      "default": "to_axial"
+    },
+    "text_map": {
+      "kind": "function",
+      "script": "scripts/hex_text_map.py",
+      "variants": { "rows_cols": "parse_text_map" },
+      "default": "rows_cols"
+    },
+    "map_check": {
+      "kind": "function",
+      "script": "scripts/hex_text_map.py",
+      "variants": {
+        "barrier": "check_barrier",
+        "fords": "ford_pairs"
+      },
+      "default": "barrier"
+    },
+    "is_adjacent": {
+      "kind": "function",
+      "script": "scripts/hex_math.py",
+      "variants": { "in_list": "is_adjacent_in_list" },
+      "default": "in_list"
+    },
+    "hex_grid": {
+      "kind": "function",
+      "script": "scripts/hex_canvas.py",
+      "variants": {
+        "plain": "hex_grid_layers",
+        "hexagon": "hex_grid_hexagon_layers",
+        "hexagon_lod": "hex_grid_hexagon_lod_layers"
+      },
+      "default": "plain"
+    },
+    "cull": {
+      "kind": "function",
+      "script": "scripts/hex_canvas.py",
+      "variants": { "visible": "visible_nodes" },
+      "default": "visible"
+    },
+    "view_center": {
+      "kind": "function",
+      "script": "scripts/hex_canvas.py",
+      "variants": { "bounds": "world_center" },
+      "default": "bounds"
+    }
+  }
+}

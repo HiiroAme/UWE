@@ -1,0 +1,17 @@
+[
+  {
+    "id": "demo_hex:event:unit_moved",
+    "type": "event",
+    "data": { "description": "一个单位成功移动" }
+  },
+  {
+    "id": "demo_hex:event:unit_attacked",
+    "type": "event",
+    "data": { "description": "一次攻击结算完成" }
+  },
+  {
+    "id": "demo_hex:event:unit_destroyed",
+    "type": "event",
+    "data": { "description": "一个单位被打到 0 血" }
+  }
+]

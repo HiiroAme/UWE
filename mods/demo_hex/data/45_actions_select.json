@@ -1,0 +1,26 @@
+[
+  {
+    "id": "demo_hex:action:select",
+    "type": "action",
+    "metadata": { "name": "选中单位（只有当前控制方还活着的单位能选）" },
+    "data": {
+      "rules": [
+        "demo_hex:rule:battle_running",
+        "demo_hex:rule:own_side",
+        "demo_hex:rule:unit_alive"
+      ],
+      "steps": [
+        {
+          "service": "demo_hex:service:select_unit",
+          "args": { "unit": ["arg", "unit"] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_hex:action:clear_selection",
+    "type": "action",
+    "metadata": { "name": "取消选中（点空地或再点一次选中的单位）" },
+    "data": { "steps": [{ "service": "demo_hex:service:clear_selection" }] }
+  }
+]

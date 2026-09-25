@@ -1,0 +1,24 @@
+[
+  {
+    "id": "demo_hex:action:recruit",
+    "type": "action",
+    "metadata": { "name": "按模板新建一个单位（调用引擎原子服务）" },
+    "data": {
+      "steps": [
+        {
+          "service": "engine:service:create_instance",
+          "args": {
+            "template": "demo_hex:entity:unit",
+            "path": ["format", "/units/{0}", ["arg", "unit"]],
+            "overrides": {
+              "id": ["arg", "unit"],
+              "name": ["format", "新单位 {0}", ["arg", "unit"]],
+              "side": ["arg", "side"],
+              "at": ["arg", "at"]
+            }
+          }
+        }
+      ]
+    }
+  }
+]

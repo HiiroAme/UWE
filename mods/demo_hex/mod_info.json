@@ -1,0 +1,38 @@
+{
+  "id": "demo_hex",
+  "name": "六边形演示",
+  "version": "0.0.0",
+  "author": "引擎自带演示",
+  "description": "最小闭环：一张六边形地图、两个单位、移动与攻击、几条规则、一次随机、一个触发、可存档可回放。",
+  "init": "scripts/init.py:build_state",
+  "scenario": "demo_hex_skirmish",
+  "ui": "demo_hex:ui:battle",
+  "uses": [
+    "pack_hex_grid>=0.0.0",
+    "pack_combat_basic>=0.0.0",
+    "pack_wargame_core>=0.0.0"
+  ],
+  "bindings": {
+    "adjacent": "pack_hex_grid.is_adjacent.in_list",
+    "damage": { "use": "pack_combat_basic.damage.dice", "params": { "modifier": 0 } }
+  },
+  "params": {
+    "units_path": "/units",
+    "unit_at_path": "/units/{unit}/at",
+    "unit_ap_path": "/units/{unit}/ap",
+    "adjacency_path": "/adjacency/{node}",
+    "move_cost": 1,
+    "ap_restore": 2,
+    "turn_path": "/turn",
+    "log_path": "/log",
+    "damage_target_path": "/units/{target}/hp",
+    "damage_dice": "1d3",
+    "damage_base": 0,
+    "ap_cost": 1,
+    "damaged_event": "demo_hex:event:unit_attacked",
+    "zero_flag_path": "/units/{target}/destroyed",
+    "zero_event": "demo_hex:event:unit_destroyed",
+    "moved_event": "demo_hex:event:unit_moved"
+  },
+  "tags": ["演示", "六边形"]
+}

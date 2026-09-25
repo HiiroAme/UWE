@@ -1,0 +1,16 @@
+[
+  {
+    "id": "demo_cards:phase:main",
+    "type": "phase",
+    "metadata": { "name": "主阶段" },
+    "data": {
+      "actions": [
+        "demo_cards:action:draw",
+        "demo_cards:action:play",
+        "demo_cards:action:end_turn",
+        "demo_cards:action:refresh_derived"
+      ],
+      "settings": { "hand_limit": 5 }
+    }
+  }
+]

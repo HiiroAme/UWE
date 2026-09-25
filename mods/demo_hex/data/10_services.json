@@ -1,0 +1,26 @@
+[
+  {
+    "id": "demo_hex:service:select_unit",
+    "type": "service",
+    "metadata": { "name": "选中单位（写界面状态，不进存档）" },
+    "data": { "script": "scripts/selection.py", "callable": "select_unit" }
+  },
+  {
+    "id": "demo_hex:service:clear_selection",
+    "type": "service",
+    "metadata": { "name": "取消选中（写界面状态）" },
+    "data": { "script": "scripts/selection.py", "callable": "clear_selection" }
+  },
+  {
+    "id": "demo_hex:service:switch_control",
+    "type": "service",
+    "metadata": { "name": "把控制权交给另一方（红 ↔ 蓝）" },
+    "data": { "script": "scripts/sides.py", "callable": "switch_control" }
+  },
+  {
+    "id": "demo_hex:service:after_destroyed",
+    "type": "service",
+    "metadata": { "name": "有人被打到 0 血：把阵亡单位撤出地图，再看战斗是否结束" },
+    "data": { "script": "scripts/battle.py", "callable": "after_destroyed" }
+  }
+]

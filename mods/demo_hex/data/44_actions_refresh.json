@@ -1,0 +1,10 @@
+[
+  {
+    "id": "demo_hex:action:refresh_derived",
+    "type": "action",
+    "metadata": { "name": "重算派生值（调用引擎原子服务）" },
+    "data": {
+      "steps": [{ "service": "engine:service:refresh_derived" }]
+    }
+  }
+]

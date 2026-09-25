@@ -1,0 +1,75 @@
+[
+  {
+    "id": "demo_hex:action:move",
+    "type": "action",
+    "metadata": { "name": "移动" },
+    "data": {
+      "rules": [
+        "demo_hex:rule:battle_running",
+        "demo_hex:rule:own_side",
+        "demo_hex:rule:unit_alive",
+        "demo_hex:rule:has_ap",
+        "demo_hex:rule:target_adjacent"
+      ],
+      "steps": [
+        {
+          "service": "pack_wargame_core:service:move",
+          "args": { "unit": ["arg", "unit"], "to": ["arg", "to"] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_hex:action:attack",
+    "type": "action",
+    "metadata": { "name": "攻击" },
+    "data": {
+      "rules": [
+        "demo_hex:rule:battle_running",
+        "demo_hex:rule:own_side",
+        "demo_hex:rule:unit_alive",
+        "demo_hex:rule:has_ap",
+        "demo_hex:rule:enemy_target",
+        "demo_hex:rule:target_alive",
+        "demo_hex:rule:unit_adjacent"
+      ],
+      "steps": [
+        {
+          "service": "pack_combat_basic:service:attack",
+          "args": { "attacker": ["arg", "unit"], "unit": ["arg", "unit"], "target": ["arg", "target"] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_hex:action:end_turn",
+    "type": "action",
+    "metadata": { "name": "结束回合：回合 +1、行动力恢复，然后把控制权交给对方" },
+    "data": {
+      "rules": ["demo_hex:rule:battle_running"],
+      "steps": [
+        { "service": "pack_wargame_core:service:advance_turn" },
+        { "service": "demo_hex:service:switch_control" }
+      ]
+    }
+  },
+  {
+    "id": "demo_hex:action:report_rejected",
+    "type": "action",
+    "metadata": { "name": "记一条被忽略的说明" },
+    "data": {
+      "steps": [
+        {
+          "service": "pack_common:service:log_append",
+          "args": { "text": ["arg", "text"] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "demo_hex:action:after_destroyed",
+    "type": "action",
+    "metadata": { "name": "有人阵亡：撤出地图，再看战斗是否结束（由触发调用）" },
+    "data": { "steps": [{ "service": "demo_hex:service:after_destroyed" }] }
+  }
+]

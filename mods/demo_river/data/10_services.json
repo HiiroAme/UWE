@@ -1,0 +1,134 @@
+[
+  {
+    "id": "demo_river:service:move",
+    "type": "service",
+    "metadata": {
+      "name": "移动单位（沿路径走，按地形扣移动力）"
+    },
+    "data": {
+      "script": "scripts/movement.py",
+      "callable": "move"
+    }
+  },
+  {
+    "id": "demo_river:service:select",
+    "type": "service",
+    "metadata": {
+      "name": "选中单位（写界面状态）"
+    },
+    "data": {
+      "script": "scripts/selection.py",
+      "callable": "select"
+    }
+  },
+  {
+    "id": "demo_river:service:preview",
+    "type": "service",
+    "metadata": {
+      "name": "预览移动目标（第一步，不移动）"
+    },
+    "data": {
+      "script": "scripts/selection.py",
+      "callable": "preview"
+    }
+  },
+  {
+    "id": "demo_river:service:clear_selection",
+    "type": "service",
+    "metadata": {
+      "name": "取消选中"
+    },
+    "data": {
+      "script": "scripts/selection.py",
+      "callable": "clear"
+    }
+  },
+  {
+    "id": "demo_river:service:to_attack",
+    "type": "service",
+    "metadata": {
+      "name": "进入攻击阶段"
+    },
+    "data": {
+      "script": "scripts/turn.py",
+      "callable": "to_attack"
+    }
+  },
+  {
+    "id": "demo_river:service:pass_control",
+    "type": "service",
+    "metadata": {
+      "name": "结束回合：交给对方 + 刷新回合开始"
+    },
+    "data": {
+      "script": "scripts/turn.py",
+      "callable": "pass_control"
+    }
+  },
+  {
+    "id": "demo_river:service:begin_settle",
+    "type": "service",
+    "metadata": {
+      "name": "进入结算：关闭声明窗口"
+    },
+    "data": {
+      "script": "scripts/turn.py",
+      "callable": "begin_settle"
+    }
+  },
+  {
+    "id": "demo_river:service:toggle_attacker",
+    "type": "service",
+    "metadata": {
+      "name": "把单位加进 / 移出本场参战名单"
+    },
+    "data": {
+      "script": "scripts/selection.py",
+      "callable": "toggle_attacker"
+    }
+  },
+  {
+    "id": "demo_river:service:clear_attackers",
+    "type": "service",
+    "metadata": {
+      "name": "清空参战名单（声明成功后调）"
+    },
+    "data": {
+      "script": "scripts/selection.py",
+      "callable": "clear_attackers"
+    }
+  },
+  {
+    "id": "demo_river:service:scroll_log",
+    "type": "service",
+    "metadata": {
+      "name": "战报栏滚动"
+    },
+    "data": {
+      "script": "scripts/ui_state.py",
+      "callable": "scroll_log"
+    }
+  },
+  {
+    "id": "demo_river:service:open_rules",
+    "type": "service",
+    "metadata": {
+      "name": "打开规则弹窗"
+    },
+    "data": {
+      "script": "scripts/ui_state.py",
+      "callable": "open_rules"
+    }
+  },
+  {
+    "id": "demo_river:service:close_rules",
+    "type": "service",
+    "metadata": {
+      "name": "关闭规则弹窗 / 确认开局介绍"
+    },
+    "data": {
+      "script": "scripts/ui_state.py",
+      "callable": "close_rules"
+    }
+  }
+]

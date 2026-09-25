@@ -1,0 +1,12 @@
+[
+  {
+    "id": "demo_hex:trigger:on_destroyed",
+    "type": "trigger",
+    "metadata": { "name": "有人被击毁 → 检查战斗是否结束" },
+    "data": {
+      "event": "demo_hex:event:unit_destroyed",
+      "order": 0,
+      "actions": [{ "action": "demo_hex:action:after_destroyed" }]
+    }
+  }
+]

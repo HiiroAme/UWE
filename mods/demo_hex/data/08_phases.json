@@ -1,0 +1,19 @@
+[
+  {
+    "id": "demo_hex:phase:action",
+    "type": "phase",
+    "metadata": { "name": "行动阶段" },
+    "data": {
+      "actions": [
+        "demo_hex:action:move",
+        "demo_hex:action:attack",
+        "demo_hex:action:end_turn",
+        "demo_hex:action:select",
+        "demo_hex:action:clear_selection"
+      ],
+      "settings": {
+        "allow_endless_turn": true
+      }
+    }
+  }
+]

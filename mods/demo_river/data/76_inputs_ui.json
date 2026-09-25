@@ -1,0 +1,30 @@
+[
+  {
+    "id": "demo_river:input:scroll_log",
+    "type": "input",
+    "metadata": { "name": "战报栏上的滚轮" },
+    "data": {
+      "kind": "scroll_log",
+      "command": "demo_river:command:scroll_log",
+      "payload": { "delta": ["arg", "delta"] }
+    }
+  },
+  {
+    "id": "demo_river:input:open_rules",
+    "type": "input",
+    "metadata": { "name": "打开规则弹窗" },
+    "data": {
+      "kind": "open_rules",
+      "command": "demo_river:command:open_rules"
+    }
+  },
+  {
+    "id": "demo_river:input:close_rules",
+    "type": "input",
+    "metadata": { "name": "关闭规则弹窗 / 确认开局介绍" },
+    "data": {
+      "kind": "close_rules",
+      "command": "demo_river:command:close_rules"
+    }
+  }
+]

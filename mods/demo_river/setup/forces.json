@@ -1,0 +1,24 @@
+{
+  "note": "初始编成（示例兵棋 v1）。row / col 是地图文本里的行列号（从 0 开始）。",
+  "units": [
+    { "id": "north_1",  "name": "青隼 1 营",   "side": "north", "attack": 3, "move": 5, "row": 1,  "col": 6 },
+    { "id": "north_2",  "name": "青隼 2 营",   "side": "north", "attack": 3, "move": 5, "row": 1,  "col": 12 },
+    { "id": "north_3",  "name": "青隼 3 营",   "side": "north", "attack": 3, "move": 5, "row": 1,  "col": 18 },
+    { "id": "north_4",  "name": "青隼 4 营",   "side": "north", "attack": 3, "move": 5, "row": 1,  "col": 24 },
+    { "id": "north_5",  "name": "青隼 5 营",   "side": "north", "attack": 3, "move": 5, "row": 2,  "col": 9 },
+    { "id": "north_6",  "name": "青隼 6 营",   "side": "north", "attack": 3, "move": 5, "row": 2,  "col": 21 },
+    { "id": "north_7",  "name": "青隼装甲 1 连", "side": "north", "attack": 4, "move": 6, "row": 2,  "col": 15 },
+    { "id": "north_8",  "name": "青隼装甲 2 连", "side": "north", "attack": 4, "move": 6, "row": 3,  "col": 12 },
+    { "id": "north_9",  "name": "青隼装甲 3 连", "side": "north", "attack": 4, "move": 6, "row": 3,  "col": 18 },
+    { "id": "north_10", "name": "铁隼装甲连",    "side": "north", "attack": 6, "move": 6, "row": 3,  "col": 24 },
+
+    { "id": "south_1", "name": "柳浦 1 连", "side": "south", "attack": 2, "move": 3, "row": 17, "col": 10 },
+    { "id": "south_2", "name": "柳浦 2 连", "side": "south", "attack": 2, "move": 3, "row": 17, "col": 13 },
+    { "id": "south_3", "name": "柳浦 3 连", "side": "south", "attack": 2, "move": 3, "row": 18, "col": 18 },
+    { "id": "south_4", "name": "柳浦 4 连", "side": "south", "attack": 2, "move": 3, "row": 19, "col": 15 },
+    { "id": "south_5", "name": "柳浦 5 连", "side": "south", "attack": 2, "move": 3, "row": 16, "col": 20 },
+    { "id": "south_6", "name": "柳浦 6 连", "side": "south", "attack": 2, "move": 3, "row": 17, "col": 22 },
+    { "id": "south_7", "name": "柳浦侦察排",   "side": "south", "attack": 3, "move": 4, "row": 16, "col": 12 },
+    { "id": "south_8", "name": "柳浦装甲排",   "side": "south", "attack": 3, "move": 4, "row": 18, "col": 24 }
+  ]
+}

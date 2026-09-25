@@ -1,0 +1,12 @@
+[
+  {
+    "id": "demo_river:input:toggle_attacker",
+    "type": "input",
+    "metadata": { "name": "攻击阶段：点自己的单位加入 / 移出参战名单" },
+    "data": {
+      "kind": "toggle_attacker",
+      "command": "demo_river:command:toggle_attacker",
+      "payload": { "unit": ["arg", "unit"] }
+    }
+  }
+]

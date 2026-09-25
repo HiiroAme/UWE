@@ -1,0 +1,32 @@
+[
+  {
+    "id": "demo_cards:trigger:on_deck_empty",
+    "type": "trigger",
+    "metadata": { "name": "牌堆空了 → 洗弃牌堆" },
+    "data": {
+      "event": "demo_cards:event:deck_empty",
+      "order": 0,
+      "actions": [{ "action": "demo_cards:action:reshuffle" }]
+    }
+  },
+  {
+    "id": "demo_cards:trigger:refresh_after_draw",
+    "type": "trigger",
+    "metadata": { "name": "抽牌后重算派生值" },
+    "data": {
+      "event": "demo_cards:event:card_drawn",
+      "order": 10,
+      "actions": [{ "action": "demo_cards:action:refresh_derived" }]
+    }
+  },
+  {
+    "id": "demo_cards:trigger:refresh_after_play",
+    "type": "trigger",
+    "metadata": { "name": "出牌后重算派生值" },
+    "data": {
+      "event": "demo_cards:event:card_played",
+      "order": 10,
+      "actions": [{ "action": "demo_cards:action:refresh_derived" }]
+    }
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "demo_river:command:toggle_attacker",
+    "type": "command",
+    "metadata": { "name": "加入 / 移出参战名单" },
+    "data": {
+      "branches": [
+        {
+          "condition": ["exists", ["format", "/units/{0}", ["arg", "unit"]]],
+          "actions": [
+            {
+              "action": "demo_river:action:toggle_attacker",
+              "args": { "unit": ["arg", "unit"] }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,8 @@
+[
+  {
+    "id": "pack_common:service:log_append",
+    "type": "service",
+    "metadata": { "name": "往指定列表追一行（通用工具）" },
+    "data": { "script": "scripts/log.py", "callable": "append_line" }
+  }
+]

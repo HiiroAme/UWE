@@ -1,0 +1,30 @@
+[
+  {
+    "id": "demo_hex:formula:unit_power",
+    "type": "formula",
+    "metadata": { "name": "每个单位的战斗力（通配派生值，一条覆盖全部单位）" },
+    "data": {
+      "target": "/units/{unit}/power",
+      "layer": 1,
+      "expression": [
+        "+",
+        ["*", ["get", ["format", "/units/{0}/ap", ["arg", "unit"]]], 2],
+        ["get", ["format", "/units/{0}/hp", ["arg", "unit"]]]
+      ]
+    }
+  },
+  {
+    "id": "demo_hex:formula:advantage",
+    "type": "formula",
+    "metadata": { "name": "红方优势（第 2 层：用第 1 层的派生值）" },
+    "data": {
+      "target": "/advantage",
+      "layer": 2,
+      "expression": [
+        "-",
+        ["get", "/units/red_1/power"],
+        ["get", "/units/blue_1/power"]
+      ]
+    }
+  }
+]

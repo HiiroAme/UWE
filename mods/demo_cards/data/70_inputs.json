@@ -1,0 +1,24 @@
+[
+  {
+    "id": "demo_cards:input:draw",
+    "type": "input",
+    "metadata": { "name": "抽牌" },
+    "data": { "kind": "draw", "command": "demo_cards:command:draw" }
+  },
+  {
+    "id": "demo_cards:input:play",
+    "type": "input",
+    "metadata": { "name": "点击手牌：出牌" },
+    "data": {
+      "kind": "play",
+      "command": "demo_cards:command:play",
+      "payload": { "index": ["arg", "index"] }
+    }
+  },
+  {
+    "id": "demo_cards:input:end_turn",
+    "type": "input",
+    "metadata": { "name": "结束回合" },
+    "data": { "kind": "end_turn", "command": "demo_cards:command:end_turn" }
+  }
+]

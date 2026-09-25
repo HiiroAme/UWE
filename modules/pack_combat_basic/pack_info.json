@@ -1,0 +1,15 @@
+{
+  "id": "pack_combat_basic",
+  "kind": "module",
+  "name": "基础战斗",
+  "version": "0.0.0",
+  "description": "伤害计算（定值 / 骰子）与一条通用的攻击骨架：扣哪一条量、骰子怎么掷，全部由 Mod 的参数决定。服务在 data/ 里登记，函数在这里声明。",
+  "capabilities": {
+    "damage": {
+      "kind": "function",
+      "script": "scripts/damage.py",
+      "variants": { "linear": "damage_linear", "dice": "damage_dice" },
+      "default": "linear"
+    }
+  }
+}

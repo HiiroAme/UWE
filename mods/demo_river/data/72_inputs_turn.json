@@ -1,0 +1,20 @@
+[
+  {
+    "id": "demo_river:input:to_attack",
+    "type": "input",
+    "metadata": { "name": "进入攻击阶段" },
+    "data": { "kind": "to_attack", "command": "demo_river:command:to_attack" }
+  },
+  {
+    "id": "demo_river:input:begin_settle",
+    "type": "input",
+    "metadata": { "name": "进入结算：关闭声明窗口" },
+    "data": { "kind": "begin_settle", "command": "demo_river:command:begin_settle" }
+  },
+  {
+    "id": "demo_river:input:pass_control",
+    "type": "input",
+    "metadata": { "name": "结束回合，交给对方" },
+    "data": { "kind": "pass_control", "command": "demo_river:command:pass_control" }
+  }
+]

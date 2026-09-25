@@ -1,0 +1,12 @@
+[
+  {
+    "id": "demo_river:ui:battle",
+    "type": "ui",
+    "metadata": { "name": "洛川平原" },
+    "data": {
+      "script": "scripts/ui_battle.py",
+      "callable": "build_view",
+      "title": "洛川平原"
+    }
+  }
+]

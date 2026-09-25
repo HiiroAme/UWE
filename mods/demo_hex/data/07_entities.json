@@ -1,0 +1,15 @@
+[
+  {
+    "id": "demo_hex:entity:unit",
+    "type": "entity",
+    "metadata": { "name": "单位模板" },
+    "data": {
+      "attributes": {
+        "hp": 10,
+        "ap": 2,
+        "destroyed": false,
+        "power": 14
+      }
+    }
+  }
+]

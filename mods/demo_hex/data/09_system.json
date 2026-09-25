@@ -1,0 +1,18 @@
+[
+  {
+    "id": "demo_hex:system:defaults",
+    "type": "system",
+    "metadata": { "name": "全局参数的初始值" },
+    "data": {
+      "state": {
+        "/turn": 1,
+        "/control_side": "red",
+        "/advantage": 0,
+        "/game_over": false,
+        "/winner": "",
+        "/weather": "晴",
+        "/rules_version": 1
+      }
+    }
+  }
+]
