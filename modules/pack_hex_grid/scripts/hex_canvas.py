@@ -67,7 +67,7 @@ def world_center(nodes, size):
 
 
 def visible_nodes(nodes, size, viewport, width, height):
-    """只挑"这一帧看得见"的格子（大地图必须裁剪：700 格 × 3 层会拖垮帧率）。
+    """只挑"这一帧看得见"的格子（大地图必须裁剪：上千格 × 3 层会拖垮帧率）。
 
     判据是"这一格的外接矩形与镜头范围有没有重叠"——按点尖朝上的六边形算
     （半宽 = √3/2 × size、半高 = size），与 to_pixel_hex_pointy 同一种摆法。

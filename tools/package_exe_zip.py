@@ -1,0 +1,62 @@
+"""把 dist 里的 exe 目录压成发布 zip（条目名用正斜杠）。
+
+位置：
+    仓库根目录 tools/ 下（开发工具，不进发布包）。
+
+为什么要这个脚本：
+    Windows 自带的 `Compress-Archive` 会把 zip 条目名写成**反斜杠**
+    （`UWE-…\\mods\\…`）——Windows 资源管理器能打开，但 Linux / macOS 的 unzip
+    会解出带反斜杠的怪文件名。Python 的 zipfile 写正斜杠，所有平台都正常。
+
+用法（在仓库根执行；先用 UWE.spec 打包出目录）：
+    python tools/package_exe_zip.py                 # 自动挑最新的 UWE-*-win64
+    python tools/package_exe_zip.py --name UWE-0.0.0-demo-win64
+"""
+
+from __future__ import annotations
+
+import argparse
+import zipfile
+from pathlib import Path
+
+# 仓库根目录（本文件在 tools/ 下）。
+REPO_ROOT = Path(__file__).resolve().parent.parent
+# 产物目录：与 tools/package_source.py 共用 dist/。
+DIST_ROOT = REPO_ROOT / "dist"
+
+
+def _latest_package_name() -> str:
+    """取 dist 里最新的 `UWE-*-win64` 目录名。"""
+    candidates = [path for path in DIST_ROOT.glob("UWE-*-win64") if path.is_dir()]
+    if not candidates:
+        raise SystemExit(f"dist 里没有 UWE-*-win64 目录：{DIST_ROOT}")
+    return max(candidates, key=lambda path: path.stat().st_mtime).name
+
+
+def main(argv: list[str] | None = None) -> int:
+    """命令行入口：压包并汇报。"""
+    parser = argparse.ArgumentParser(description="把 dist/<包名> 压成同名 zip（正斜杠条目名）")
+    parser.add_argument("--name", default="", help="dist 里的目录名；缺省取最新的 UWE-*-win64")
+    args = parser.parse_args(argv)
+
+    name = args.name or _latest_package_name()
+    root = DIST_ROOT / name
+    if not root.is_dir():
+        raise SystemExit(f"找不到目录：{root}")
+
+    zip_path = DIST_ROOT / f"{name}.zip"
+    files = sorted(path for path in root.rglob("*") if path.is_file())
+    if zip_path.exists():
+        zip_path.unlink()
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
+        for path in files:
+            archive.write(path, arcname=f"{name}/{path.relative_to(root).as_posix()}")
+
+    size_mb = zip_path.stat().st_size / 1024 / 1024
+    print(f"打包完成：{zip_path.relative_to(REPO_ROOT).as_posix()}"
+          f"（{len(files)} 个文件，{size_mb:.2f} MB，条目名全是正斜杠）")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
