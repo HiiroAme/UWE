@@ -161,5 +161,7 @@ python -m PyInstaller --noconfirm UWE.spec
 
 ## 反馈
 
-发布地址与联系方式待补：GitHub / Gitee / 爱发电 / 贴吧 / B 站。
+项目主页（Gitee）：<https://gitee.com/HirroAme/universal-wargaming-engine-uwe>
+——打包好的 Windows 版与源码包放在仓库的「发行版 / 附件」里。
+
 Bug、玩法建议、模块想法都欢迎；如果能附上 `logs/` 里对应的日志文件就更好定位。
