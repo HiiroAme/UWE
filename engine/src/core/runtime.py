@@ -83,6 +83,7 @@ class EngineRuntime:
         log_level: LogLevel = LogLevel.INFO,
             clock: Callable[[], float] | None = None,
             media: Media | None = None,
+            context: Context | None = None,
             params: Mapping[str, Any] | None = None,
             functions: Mapping[str, Callable[..., Any]] | None = None,
     ) -> None:
@@ -100,6 +101,8 @@ class EngineRuntime:
             log_level: 最低记录级别；
             clock: 读时钟的调用（适配器提供；None 表示不记录时间戳）；
             media: 媒体端口（适配器提供；None 表示静默——没有声音设备时也照常跑）；
+            context: 界面状态（不存档）；缺省新建一个。热重载时把旧的那一个传进来，
+                镜头 / 选中这类界面状态就能跨重载保留（R6-5）；
             params: 平铺参数（加载层从 Mod 与模块收集来的那一份，见模块规格 D-2）；
             functions: 追加的表达式函数表（例如几何函数）；随机的三个函数由引擎自动加入，
                 如果调用方给了同名函数，以调用方给的为准。
@@ -116,7 +119,7 @@ class EngineRuntime:
         self._hub: RegistryHub = hub
         self._content: CompiledContent = content
         self._journal: Journal = Journal()
-        self._context: Context = Context()
+        self._context: Context = context if context is not None else Context()
         self._sequence: SequenceCounter = SequenceCounter()
         self._rng: Rng = Rng(seed)
         self._logger: Logger = Logger(sink=log_sink, clock=clock, level=log_level)
@@ -187,6 +190,11 @@ class EngineRuntime:
     def context(self) -> Context:
         """返回非存档上下文。"""
         return self._context
+
+    @property
+    def media(self) -> Media:
+        """返回媒体端口（宿主可用它停音乐；测试用它核对注入是否生效）。"""
+        return self._media
 
     @property
     def journal(self) -> Journal:
@@ -276,7 +284,9 @@ class EngineRuntime:
             产出物照常进同一个 CommandDelta（§16），不需要任何额外通道。
         """
         return {
-            REFRESH_DERIVED_SERVICE: make_refresh_service(self._content.formulas),
+            # 函数表要一起传：公式里写了 ["call", …] 时，触发链这条路才和引擎自愈那条路等价（R6-3）。
+            REFRESH_DERIVED_SERVICE: make_refresh_service(
+                self._content.formulas, functions=self._functions),
             CREATE_INSTANCE_SERVICE: make_create_instance_service(self._content),
         }
 
@@ -416,7 +426,9 @@ class EngineRuntime:
             - **就地替换** State 的内容而不换根对象：引擎各处（视图、管线）都持有
               这个根，换对象会像 §6.2 说的那样破坏锚点；
             - 采用"快照 + 叠加变化量"的回放结果（§18.2），不重跑 Command 与规则；
-            - 随机状态、命令序列与批次日志一并接回，读档后再存档不会丢历史。
+            - 随机状态、命令序列与批次日志一并接回，读档后再存档不会丢历史；
+            - **未结算的命令队列清空**（R6-4）：那是旧时间线上的意图，不能落到新局面上；
+            - **界面状态清空**（R6-5）：Context 不随存档恢复，读档之后 Mod 视图从干净状态开始。
         """
         if not isinstance(save, SaveFile):
             raise TypeError(f"apply_save 需要 SaveFile，实际是 {type(save).__name__}")
@@ -427,6 +439,12 @@ class EngineRuntime:
         self._state.update(replayed)
         self._rng.restore(save.random_state)
         self._journal.restore(save)
+        # 读档 = 换到另一条时间线：旧时间线上"点了还没结算"的命令要丢掉（R6-4）。
+        dropped = self._dispatcher.clear_queue()
+        # 界面状态不跨存档沿用（R6-5）：文档口径就是"读档后 Context 是空的"。
+        self._context.clear()
+        if dropped:
+            self._logger.info("读档丢弃了未结算的命令", extra={"dropped": dropped})
         # 命令 id 接着历史走（R5-1）：不然读档后 id 从 1 重来、与历史撞车
         # （一份存档里两条同名命令，破坏 P6 / D-41 的溯源）。
         # **变化量序号不接**（R5-5）：它不存档、只用于本次运行的排序（SequenceCounter 的类文档），

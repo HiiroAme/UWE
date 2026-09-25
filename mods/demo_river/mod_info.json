@@ -30,7 +30,7 @@
     "fords_path": "/fords",
     "adjacency_path": "/adjacency",
     "state_prefix": "demo_river.camera",
-    "turn_limit": 12,
+    "turn_limit": 6,
     "attacker_side": "north",
     "defender_side": "south",
     "win_point_message": "攻方拿下柳浦村胜利点",

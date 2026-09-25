@@ -16,6 +16,7 @@ from pathlib import Path
 
 from adapters import LocalFileSystem, PythonScriptLoader
 from core.pipeline import Input
+from core.ui import PageContext
 from modload import ModLoader
 from shell import GameSession
 
@@ -140,6 +141,25 @@ class TestMove(unittest.TestCase):
         self.assertEqual(context.get("demo_river.pending", ""), "")
         self.assertEqual(context.get("demo_river.selected", ""), "north_1")
 
+    def test_click_on_empty_ground_clears_selection(self):
+        """点无关处（兜底层给的 clear_selection）→ 取消选中、清掉待确认目标（R6-2 加强项）。"""
+        session = self.session
+        self._send("select", {"unit": "north_1"})
+        context = session.runtime.context
+        self.assertEqual(context.get("demo_river.selected", ""), "north_1")
+
+        # 视图给的兜底点击：id 固定是 input:empty，kind 就是 clear_selection
+        page = session.loaded.pages["demo_river:ui:battle"]
+        view = page(PageContext(state=session.state, size=(960, 640), context=context,
+                                page_id="demo_river:ui:battle", functions=session.loaded.functions))
+        empty = next(layer for layer in view.layers if layer.id == "input:empty")
+        self.assertEqual(empty.click.kind, "clear_selection")
+
+        result = self._send("clear_selection", {})
+        self.assertTrue(result.committed)
+        self.assertEqual(context.get("demo_river.selected", ""), "")
+        self.assertEqual(context.get("demo_river.pending", ""), "")
+
     def test_disordered_unit_cannot_move_or_fight(self):
         """混乱单位：不能移动（规则拦）、不能参战（声明服务拦）——设计文档 M-2 / M-6。"""
         session = self.session
@@ -183,7 +203,8 @@ class TestMove(unittest.TestCase):
         self.assertTrue(passed.committed)
         state = self.session.state
         self.assertEqual(state["control_side"], "south")
-        self.assertEqual(state["turn"], 2)
+        # 一个回合 = 双方各行动一次：攻方交棒只是换人，回合数不动（批次 69 改）
+        self.assertEqual(state["turn"], 1)
         self.assertEqual(state["stage"], "move")                      # 回到移动阶段
         self.assertTrue(state["units"]["south_1"]["zoc_start"])       # 在敌方控制区里
         self.assertFalse(state["units"]["south_1"]["fought"])         # 打过的记录清零了

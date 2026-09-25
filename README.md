@@ -168,7 +168,7 @@ python -m PyInstaller --noconfirm UWE.spec
 - 版本号 0.0.0 表示**格式未定型**：模块、Mod 与存档结构都还可能变；
 - **可视化编辑器还没有**：现在写 Mod 靠手写 JSON，必要时加少量 Python；
 - 只有桌面端（pygame）；exe 包已经能双击玩，源码运行则需要自己装 Python；
-- 图片 / 音频接口已经留好，示例里还没有实际用到；
+- 音频接口已经接通（宿主会注入 `PygameMedia`，相对路径按 Mod 目录解析）；示例里还没有实际用到；
 - 目前只在 Windows + CPython 3.12 上完整跑过测试。
 
 ## 路线图

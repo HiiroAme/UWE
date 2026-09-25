@@ -28,7 +28,7 @@ from typing import Any, Callable
 from core.context import Context
 from core.logger import LogLevel, Logger
 from core.pipeline import Input
-from core.ports import FileSystem, ScriptLoader, Window, WindowEvent
+from core.ports import FileSystem, Media, ScriptLoader, Window, WindowEvent
 from core.syscall import SyscallResult, SyscallRunner
 from core.ui import ClickResult, Layer, View
 from core.version import ENGINE_NAME, version_text
@@ -82,6 +82,7 @@ class ShellApp:
         modules_root: str = "",
         logger: Logger | None = None,
         seed_supplier: Callable[[], int] | None = None,
+        media_factory: Callable[[str], Media] | None = None,
         clock: Callable[[], float] | None = None,
         title: str = ENGINE_NAME,
     ) -> None:
@@ -96,6 +97,8 @@ class ShellApp:
             modules_root: 逻辑模块根目录（每个子文件夹一个模块）；空字符串表示不带模块。
             logger: 日志对象；
             seed_supplier: 取新游戏随机种子的调用；缺省用秒级时间戳；
+            media_factory: 按"Mod 文件夹"造媒体端口的调用（宿主注入，例如 PygameMedia）；
+                缺省 None = 静默，不碰任何平台（R6-6）；
             clock: 读时间的调用（秒，单调递增）；缺省 time.monotonic，测试可注入假时钟；
             title: 窗口标题。
         输出：
@@ -125,6 +128,7 @@ class ShellApp:
         self._game_host: UiHost = UiHost(window, context=self._context, logger=logger)
         self._overlay_host: UiHost = UiHost(window, context=self._context, logger=logger)
         self._seed_supplier: Callable[[], int] = seed_supplier or (lambda: int(time.time()))
+        self._media_factory: Callable[[str], Media] | None = media_factory
         self._clock: Callable[[], float] = clock or time.monotonic
         self._message_until: float = 0.0
         self._title: str = title
@@ -627,6 +631,22 @@ class ShellApp:
         self._session.submit_input(Input(entry.input, dict(entry.data), 0.0, "ui"))
         self._session.settle((f"ui:modmenu:{index}",))
 
+    def _make_media(self, mod_folder: str) -> Media | None:
+        """按"这一局的 Mod 目录"造媒体端口；宿主没注入工厂就返回 None（静默）。
+
+        输入：
+            mod_folder: Mod 文件夹（加载层给的那份）。
+        输出：
+            Media 或 None。
+        异常：
+            由注入的工厂抛出（两处调用点都在 try 里，会变成界面提示）。
+        变量：
+            无。
+        """
+        if self._media_factory is None:
+            return None
+        return self._media_factory(mod_folder)
+
     def start_new_game(self, mod_id: str) -> None:
         """全加载选中的 Mod 并开新局。"""
         try:
@@ -642,6 +662,7 @@ class ShellApp:
                 save_path=f"{self._saves_root}/{mod_id}_slot1.json",
                 log_sink=None,
                 log_level=self._logger.min_level if self._logger is not None else LogLevel.INFO,
+                media=self._make_media(loaded.info.folder),
             )
         except Exception as exc:
             self._put_message(f"加载 Mod 失败：{exc}", _MESSAGE_SECONDS_LONG)
@@ -659,7 +680,8 @@ class ShellApp:
             if info is None:
                 raise ValueError(f"存档属于 Mod {save.mod.id!r}，但没找到它")
             loaded = self._loader.load(info)
-            session = GameSession(loaded, files=self._files, seed=0, save_path=path)
+            session = GameSession(loaded, files=self._files, seed=0, save_path=path,
+                                  media=self._make_media(loaded.info.folder))
             session.runtime.apply_save(save)
         except Exception as exc:
             self._put_message(f"读档失败：{exc}", _MESSAGE_SECONDS_LONG)

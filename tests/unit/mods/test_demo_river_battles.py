@@ -159,22 +159,22 @@ class TestBattleDeclarations(unittest.TestCase):
                          session.state["units"]["south_2"]["move"])                  # 南方恢复了
 
     def test_victory_when_attacker_holds_the_point(self):
-        """回合末攻方站在胜利点上 → 攻方胜（要把一个大回合走完才判）。"""
+        """回合末攻方站在胜利点上 → 攻方胜（要把一个回合走完才判）。"""
         session = make_session()
         victory = next(k for k, n in session.state["nodes"].items() if n.get("victory"))
         session.state["units"]["north_10"]["at"] = victory
         send(session, "to_attack", {})
         send(session, "pass_control", {})          # 北方结束 → 南方回合
-        self.assertFalse(session.state["game_over"])          # 还没到大回合末
+        self.assertFalse(session.state["game_over"])          # 攻方交棒还不是回合末
         send(session, "to_attack", {})
-        send(session, "pass_control", {})          # 南方结束 → 大回合末
+        send(session, "pass_control", {})          # 南方结束 → 回合末
         self.assertTrue(session.state["game_over"])
         self.assertEqual(session.state["winner"], "north")
 
     def test_victory_when_turn_limit_passes(self):
         """到回合上限攻方还没占住 → 守方胜。"""
         session = make_session()
-        session.state["turn"] = 13                 # 已经超过上限 12
+        session.state["turn"] = 7                  # 已经超过上限 6
         send(session, "to_attack", {})
         send(session, "pass_control", {})
         send(session, "to_attack", {})
@@ -183,13 +183,13 @@ class TestBattleDeclarations(unittest.TestCase):
         self.assertEqual(session.state["winner"], "south")
 
     def test_turn_limit_boundary(self):
-        """边界：第 12 回合末（turn 变 13）判守方胜；turn 正好 12 时还不判。"""
+        """边界：第 6 回合末（turn 变 7）判守方胜；turn 正好 6 时还不判。"""
         session = make_session()
-        session.state["turn"] = 12
+        session.state["turn"] = 6
         send(session, "to_attack", {})
         send(session, "pass_control", {})
         send(session, "to_attack", {})
-        send(session, "pass_control", {})          # turn → 13，跨过上限
+        send(session, "pass_control", {})          # turn → 7，跨过上限
         self.assertTrue(session.state["game_over"])
         self.assertEqual(session.state["winner"], "south")
 
@@ -282,7 +282,7 @@ class TestBattleDeclarations(unittest.TestCase):
         """R4-8：阵营名只有 State 一个来源——改 `/defender_side` 会改变判定时机。"""
         session = make_session()
         session.state["defender_side"] = "north"      # 故意改坏：现在"守方"就是北军
-        session.state["turn"] = 13                    # 已过回合上限：判守方（也就是 north）胜
+        session.state["turn"] = 7                     # 已过回合上限（6）：判守方（也就是 north）胜
         send(session, "pass_control", {})
         self.assertTrue(session.state["game_over"])
         self.assertEqual(session.state["winner"], "north")   # 判的就是 State 里那个"守方"
@@ -300,6 +300,33 @@ class TestBattleDeclarations(unittest.TestCase):
         kinds = [kind for kind, _ in view_clicks(session)]
         self.assertNotIn("toggle_attacker", kinds)
         self.assertNotIn("declare_battle", kinds)
+
+    def test_declaration_only_carries_adjacent_attackers(self):
+        """R6-2：名单里混进够不着的单位时，视图给的声明只带相邻的那些。"""
+        session = make_session()
+        key = {(n["row"], n["col"]): k for k, n in session.state["nodes"].items()}
+        session.state["units"]["north_1"]["at"] = key[(19, 10)]   # 只挨着 south_2，够不着 south_1
+        click(session, "toggle_attacker", unit="north_10")   # 挨着 south_1
+        click(session, "toggle_attacker", unit="north_1")
+        self.assertEqual(session.runtime.context.get("demo_river.attackers"),
+                         ["north_10", "north_1"])
+
+        found = [data for kind, data in view_clicks(session)
+                 if kind == "declare_battle" and data.get("target") == "south_1"]
+        self.assertEqual(found, [{"units": ["north_10"], "target": "south_1"}])
+
+        result = click(session, "declare_battle", target="south_1")
+        self.assertTrue(result.committed)
+        self.assertEqual([battle["units"] for battle in session.state["battles"]],
+                         [["north_10"]])
+
+    def test_click_on_empty_clears_attacker_list(self):
+        """R6-2：攻击阶段点无关处 → 清空参战名单（已声明的战斗列表不动）。"""
+        session = make_session()
+        click(session, "toggle_attacker", unit="north_10")
+        self.assertEqual(session.runtime.context.get("demo_river.attackers"), ["north_10"])
+        send(session, "clear_selection", {})
+        self.assertEqual(session.runtime.context.get("demo_river.attackers"), [])
 
     def test_cannot_end_turn_with_pending_battles(self):
         """还有未结算的战斗时，结束回合被规则拦住。"""

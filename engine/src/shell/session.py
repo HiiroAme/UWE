@@ -27,10 +27,11 @@
 
 from typing import Any
 
+from core.context import Context
 from core.logger import LogSink, LogLevel
 from core.persistence import SaveFile, read_save, write_save
 from core.pipeline import Input
-from core.ports import FileSystem
+from core.ports import FileSystem, Media
 from core.runtime import EngineRuntime
 from modload import LoadedMod, ModInfo
 
@@ -59,6 +60,7 @@ class GameSession:
         clock: Any = None,
         snapshot_every_settlement: bool = False,
         state: dict | None = None,
+        media: Media | None = None,
     ) -> None:
         """创建会话（默认就是"开新局"）。
 
@@ -72,6 +74,8 @@ class GameSession:
             snapshot_every_settlement: 每次结算后自动拍快照——这是"快照时机"的一种
                 现成选择；Mod 想按回合 / 按存档拍，可以自己调 session.take_snapshot()；
             state: 自定义初始 State；缺省用 Mod 的初始 State。
+            media: 媒体端口（适配器提供；None 表示静默）。宿主按"这一局的 Mod 目录"构造它，
+                相对路径的资源才找得到（R6-6）。
         输出：
             无（构造对象）。
         异常：
@@ -88,12 +92,14 @@ class GameSession:
         self._log_sink: LogSink | None = log_sink
         self._log_level: LogLevel = log_level
         self._clock: Any = clock
+        self._media: Media | None = media
         self._runtime: EngineRuntime = runtime if runtime is not None else self._build_runtime(
             seed=seed,
             state=loaded.initial_state if state is None else state,
             log_sink=log_sink,
             log_level=log_level,
             clock=clock,
+            media=media,
         )
 
     def _build_runtime(
@@ -104,12 +110,15 @@ class GameSession:
         log_sink: LogSink | None,
         log_level: LogLevel,
         clock: Any,
+        media: Media | None = None,
+        context: Context | None = None,
     ) -> EngineRuntime:
         """按 Mod 装一个引擎运行期。
 
         输入：
             seed: 随机种子；state: 初始 State；
             log_sink / log_level / clock: 日志与时钟。
+            media: 媒体端口（None = 静默）；context: 复用旧界面状态（热重载用，见 R6-5）。
         输出：
             EngineRuntime。
         异常：
@@ -128,6 +137,8 @@ class GameSession:
             log_sink=log_sink,
             log_level=log_level,
             clock=clock,
+            media=media,
+            context=context,
             functions=self._loaded.functions or None,
             params=self._loaded.params or None,
         )
@@ -303,6 +314,7 @@ class GameSession:
 
         state = self._runtime.state
         random_state = self._runtime.rng.state()
+        context = self._runtime.context          # 界面状态跨重载保留（R6-5）
 
         self._loaded = loaded
         self._runtime = self._build_runtime(
@@ -311,6 +323,8 @@ class GameSession:
             log_sink=self._log_sink,
             log_level=self._log_level,
             clock=self._clock,
+            media=self._media,
+            context=context,
         )
         self._runtime.restore_random_state(random_state)
         updated = self._runtime.refresh_derived()

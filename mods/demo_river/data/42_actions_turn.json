@@ -67,7 +67,7 @@
     "id": "demo_river:action:check_victory",
     "type": "action",
     "metadata": {
-      "name": "大回合末判胜负（固定拆解）"
+      "name": "回合末判胜负（固定拆解）"
     },
     "data": {
       "rules": [

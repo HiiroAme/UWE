@@ -59,6 +59,7 @@ if not getattr(sys, "frozen", False):
 
 from adapters import FileLogSink, LocalFileSystem, PythonScriptLoader, StreamLogSink, TeeSink  # noqa: E402
 from adapters.pygame_adapter import PygameAdapter  # noqa: E402
+from adapters.pygame_media import PygameMedia  # noqa: E402
 from core.logger import LogLevel, Logger  # noqa: E402
 from core.version import ENGINE_NAME, ENGINE_VERSION  # noqa: E402
 from shell import ShellApp  # noqa: E402
@@ -123,6 +124,8 @@ def main() -> int:
         saves_root=str(SAVES_ROOT),
         modules_root=str(MODULES_ROOT),
         logger=logger,
+        # 媒体适配器按"这一局的 Mod 目录"构造：相对路径（如 assets/hit.wav）才找得到（R6-6）。
+        media_factory=lambda mod_folder: PygameMedia(base_dir=mod_folder),
     )
     logger.info("进入主循环（Esc 返回首页 / 退出，S 存档）")
     try:

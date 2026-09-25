@@ -120,6 +120,13 @@ class TestHotReload(unittest.TestCase):
         self._send(session, 1)
         self.assertEqual(session.state["counter"], 11)  # 新脚本：1 * 10
 
+    def test_reload_keeps_the_ui_context(self):
+        """R6-5：热重载保留界面状态（镜头 / 选中 / 战报滚动不该被重置）。"""
+        session = GameSession(self._load(), files=LocalFileSystem(), seed=1)
+        session.runtime.context.put("demo.ui.marker", "keep")
+        session.apply_reload(self._load())
+        self.assertEqual(session.runtime.context.get("demo.ui.marker", ""), "keep")
+
     def test_data_change_takes_effect(self):
         """改数据（规则条件）后重载：新规则立刻生效（这里把规则改成永远失败）。"""
         session = GameSession(self._load(), files=LocalFileSystem(), seed=1)

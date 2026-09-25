@@ -56,6 +56,51 @@ class TestLoadOnPlayedSession(unittest.TestCase):
             except OSError:
                 pass
 
+    def test_load_drops_pending_commands(self):
+        """R6-4：读档前"点了还没结算"的命令，不能落到读进来的新局面上。"""
+        folder = SCRATCH / "case_load_pending"
+        shutil.rmtree(folder, ignore_errors=True)
+        folder.mkdir(parents=True, exist_ok=True)
+        path = str(folder / "slot.json")
+        try:
+            session = make_session()
+            session.save(path)
+            before = session.state["units"]["red_1"]["at"]
+
+            session.submit_input(Input("move", {"unit": "red_1", "to": "n0_0"}, 1.0, "ui"))
+            self.assertEqual(session.runtime.dispatcher.queue_length, 1)   # 还没结算
+
+            session.load(path)
+            self.assertEqual(session.runtime.dispatcher.queue_length, 0)   # 旧时间线的命令被丢掉
+            session.settle(["turn:1"])                                     # 再结算也不该冒出命令
+            self.assertEqual(session.state["units"]["red_1"]["at"], before)
+        finally:
+            shutil.rmtree(folder, ignore_errors=True)
+            try:
+                SCRATCH.rmdir()
+            except OSError:
+                pass
+
+    def test_load_clears_the_ui_context(self):
+        """R6-5：读档后界面状态是空的（Context 不随存档恢复）。"""
+        folder = SCRATCH / "case_load_context"
+        shutil.rmtree(folder, ignore_errors=True)
+        folder.mkdir(parents=True, exist_ok=True)
+        path = str(folder / "slot.json")
+        try:
+            session = make_session()
+            session.save(path)
+            session.runtime.context.put("demo.ui.test", "上一局的残留")
+            session.load(path)
+            self.assertEqual(session.runtime.context.get("demo.ui.test", ""), "")
+            self.assertEqual(len(session.runtime.context), 0)
+        finally:
+            shutil.rmtree(folder, ignore_errors=True)
+            try:
+                SCRATCH.rmdir()
+            except OSError:
+                pass
+
 
 if __name__ == "__main__":
     unittest.main()

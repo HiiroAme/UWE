@@ -180,6 +180,25 @@ class Dispatcher:
             },
         )
 
+    def clear_queue(self) -> int:
+        """清空"还没结算"的命令队列，返回丢掉的条数（读档用）。
+
+        输入：无。
+        输出：
+            被丢弃的命令条数（给调用方记日志）。
+        异常：
+            无。
+        变量：
+            无。
+
+        说明：
+            读档 = 换到另一条时间线：旧时间线上"点了还没结算"的命令不能落到新局面上（R6-4）。
+            已经结算过的命令与批次日志不受影响（它们归 Journal 管）。
+        """
+        dropped = len(self._queue)
+        self._queue.clear()
+        return dropped
+
     def submit_input(self, input_event: Input) -> Command | None:
         """把统一输入映射成 Command 并入队（§9 第 1～3 步）。
 

@@ -45,7 +45,7 @@ class LocalFileSystem:
         return Path(path).is_file()
 
     def read_text(self, path: str) -> str:
-        """读取整个文件（UTF-8）。
+        """读取整个文件（UTF-8；带 BOM 的文件也接受）。
 
         输入：
             path: 文件路径。
@@ -58,7 +58,9 @@ class LocalFileSystem:
             无。
         """
         _require_path(path)
-        return Path(path).read_text(encoding="utf-8")
+        # utf-8-sig：读到 BOM 会吃掉，读没有 BOM 的文件行为不变。
+        # Windows 的记事本 / PowerShell 5.1 很容易写出带 BOM 的 JSON（R6-7）。
+        return Path(path).read_text(encoding="utf-8-sig")
 
     def write_text(self, path: str, text: str) -> None:
         """写入文本文件（UTF-8，自动建父目录，先写临时文件再替换）。

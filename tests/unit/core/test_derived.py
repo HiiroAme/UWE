@@ -140,6 +140,33 @@ class TestRefresh(unittest.TestCase):
         self.assertEqual(view.get("/power"), 10)
         self.assertEqual(view.get("/advantage"), 11)
 
+    def test_service_carries_the_function_table(self):
+        """R6-3：触发链用的原子服务也要带函数表，公式里的 ["call", …] 才算得出来。"""
+        from core.context import Context
+        from core.derived import make_refresh_service
+        from core.logger import Logger
+        from core.pipeline import Command, EngineApi, SequenceCounter
+        from core.rng import Rng
+        from core.temp_state import TempState
+
+        view = TempState({"roll": 0}, "c1")
+        command = Command(
+            command_id="c1", definition_id="engine:service:refresh_derived",
+            source="engine", payload={}, created_at=0.0,
+        )
+        api = EngineApi(
+            view, SequenceCounter(), command, "demo",
+            rng=Rng(1), logger=Logger(sink=None), context=Context(),
+            media=SilentMedia(), functions={},
+        )
+        handle = api.for_service("a1", "engine:service:refresh_derived")
+        service = make_refresh_service(
+            {"f": formula("f", "/roll", ["call", "rng.int", 1, 6])},
+            functions={"rng.int": lambda low, high: 4},
+        )
+        service(handle, {})
+        self.assertEqual(view.get("/roll"), 4)
+
 
 if __name__ == "__main__":
     unittest.main()

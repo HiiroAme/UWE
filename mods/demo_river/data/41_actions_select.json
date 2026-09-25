@@ -28,6 +28,11 @@
     "id": "demo_river:action:clear_selection",
     "type": "action",
     "metadata": { "name": "取消选中" },
-    "data": { "steps": [{ "service": "demo_river:service:clear_selection" }] }
+    "data": {
+      "steps": [
+        { "service": "demo_river:service:clear_selection" },
+        { "service": "demo_river:service:clear_attackers" }
+      ]
+    }
   }
 ]

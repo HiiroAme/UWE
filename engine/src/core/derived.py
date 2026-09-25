@@ -193,11 +193,14 @@ def _one_update(
     )
 
 
-def make_refresh_service(formulas: Mapping[str, CompiledFormula]):
+def make_refresh_service(formulas: Mapping[str, CompiledFormula],
+                         *, functions: Mapping[str, Callable[..., Any]] | None = None):
     """造出引擎原子服务 `engine:service:refresh_derived` 的实现。
 
     输入：
         formulas: 本 Mod 的全部派生值公式（来自编译后的内容）。
+        functions: 表达式可用到的外部函数表（随机、几何……）。**运行期必须把它传进来**：
+            公式里写了 ["call", …] 时，触发链这条路才会和引擎自愈那条路算出一样的结果（R6-3）。
     输出：
         服务函数 fn(api, args) -> None（契约见 core.ports.services）。
     异常：
@@ -227,6 +230,7 @@ def make_refresh_service(formulas: Mapping[str, CompiledFormula]):
         label = ""
         if isinstance(args, dict) and isinstance(args.get("label"), str):
             label = args["label"]
-        refresh_derived(api, formulas, lambda update: emit_update(api, update, label=label))
+        refresh_derived(api, formulas, lambda update: emit_update(api, update, label=label),
+                        functions=functions)
 
     return refresh_service

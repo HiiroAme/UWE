@@ -26,15 +26,18 @@ class PygameMedia:
     """用 pygame.mixer 放声音。
 
     字段：
+        _base: 相对路径的基准目录（通常是这一局的 Mod 文件夹；空串表示没有基准）；
         _ready: 混音器是否可用；
         _sounds: 音效路径 → Sound（缓存）；
         _current_music: 当前音乐路径（没有时为 None）。
     """
 
-    def __init__(self) -> None:
+    def __init__(self, base_dir: str = "") -> None:
         """初始化混音器（失败就静默）。
 
-        输入：无。
+        输入：
+            base_dir: 相对路径的基准目录（通常是这一局的 Mod 文件夹）；
+                空串表示没有基准，此时相对路径按进程当前工作目录解析。
         输出：
             无（构造对象）。
         异常：
@@ -42,6 +45,7 @@ class PygameMedia:
         变量：
             无。
         """
+        self._base: Path | None = Path(base_dir) if base_dir else None
         self._sounds: dict[str, Any] = {}
         self._current_music: str | None = None
         try:
@@ -50,6 +54,24 @@ class PygameMedia:
         except Exception as exc:  # 没有声音设备、驱动缺失……
             print(f"[媒体] 没有可用的声音设备，音效将被忽略：{exc}")
             self._ready = False
+
+    def _resolve(self, path: str) -> Path:
+        """把资源路径解析成实际文件：绝对路径照用；相对路径先按基准目录，找不到再回退当前目录。
+
+        输入：
+            path: 逻辑资源路径（Mod 里通常写 "assets/hit.wav"）。
+        输出：
+            Path：准备交给 pygame 的实际路径。
+        异常：
+            无。
+        变量：
+            raw / candidate: 原路径与"按基准目录拼出来"的候选路径。
+        """
+        raw = Path(path)
+        if raw.is_absolute() or self._base is None:
+            return raw
+        candidate = self._base / raw
+        return candidate if candidate.is_file() else raw
 
     def play_sound(self, path: str) -> bool:
         """播放一次音效。
@@ -65,19 +87,21 @@ class PygameMedia:
         """
         if not self._ready:
             return False
-        sound = self._sounds.get(path)
+        resolved = self._resolve(path)
+        key = str(resolved)
+        sound = self._sounds.get(key)
         if sound is None:
-            if not Path(path).is_file():
+            if not resolved.is_file():
                 print(f"[媒体] 音效文件不存在，跳过：{path}")
-                self._sounds[path] = False
+                self._sounds[key] = False
                 return False
             try:
-                sound = pygame.mixer.Sound(path)
+                sound = pygame.mixer.Sound(str(resolved))
             except Exception as exc:
                 print(f"[媒体] 音效加载失败，跳过：{path}：{exc}")
-                self._sounds[path] = False
+                self._sounds[key] = False
                 return False
-            self._sounds[path] = sound
+            self._sounds[key] = sound
         if sound is False:
             return False
         try:
@@ -102,11 +126,12 @@ class PygameMedia:
         """
         if not self._ready:
             return False
-        if not Path(path).is_file():
+        resolved = self._resolve(path)
+        if not resolved.is_file():
             print(f"[媒体] 音乐文件不存在，跳过：{path}")
             return False
         try:
-            pygame.mixer.music.load(path)
+            pygame.mixer.music.load(str(resolved))
             pygame.mixer.music.play(-1 if loop else 0)
         except Exception as exc:
             print(f"[媒体] 音乐播放失败：{path}：{exc}")

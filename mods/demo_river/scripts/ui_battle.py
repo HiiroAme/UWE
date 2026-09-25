@@ -151,7 +151,16 @@ def build_view(page_context):
     grid_args = {"nodes": visible, "size": BASE_SIZE, "center": world_center, "items": items}
     if variant == "hexagon":     # 全画法要格线宽度；缩略模式没有格线，也就没有这个参数
         grid_args["outline_width"] = 0.75   # 原来 1.5 的一半；屏幕整数像素由适配器取整
-    layers = list(make_grid(**grid_args))
+    # 兜底点击层（z 最低）：具体格子 / 按钮 / 弹窗都没认领的点击，统一算"点无关处"，
+    # 走输入注册表里那条没有 condition 的 clear_selection（取消选中 / 清参战名单，R6-2）。
+    layers: list[Layer] = []
+    if not state.get("game_over"):
+        layers.append(Layer(
+            id="input:empty", rect=(0.0, 0.0, float(width), float(height)),
+            kind="rect", color=(0, 0, 0, 0), z=1, fixed=True,
+            click=ClickResult(kind="clear_selection", data={}),
+        ))
+    layers.extend(make_grid(**grid_args))
     layers.extend(_unit_counters(page_context, visible, units, state, world_center))
     marker = _victory_marker(page_context, visible, world_center)
     if marker is not None:
@@ -594,9 +603,14 @@ def _attack_cells(page_context, units):
         occupant = _unit_at(units, cell)
         other = units.get(occupant) if occupant else None
         if other and other.get("side") != side and attackers:
-            _put(plan, cell, line=ATTACK_LINE,
-                 click=ClickResult(kind="declare_battle",
-                                   data={"units": list(attackers), "target": occupant}))
+            # 只带"与这个目标相邻"的参战单位：模块要求每个参战单位都相邻，否则整场被拒
+            # （R6-2）——名单里够不着的单位不该毁掉这次声明。
+            participants = [key for key in attackers
+                            if cell in adjacency.get(units[key].get("at", ""), ())]
+            if participants:
+                _put(plan, cell, line=ATTACK_LINE,
+                     click=ClickResult(kind="declare_battle",
+                                       data={"units": participants, "target": occupant}))
     return _advance_cells(state, units, plan)
 
 

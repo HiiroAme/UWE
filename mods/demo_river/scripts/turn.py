@@ -23,13 +23,16 @@ def begin_settle(api, args):
 
 
 def pass_control(api, args):
-    """结束本方回合：**先恢复本方混乱单位**，再回合 +1、把控制权交给对方。
+    """结束本方行动：**先恢复本方混乱单位**，再把控制权交给对方；回合结束才翻页。
 
-    本服务只管这一局的事：混乱恢复、回合 / 控制方 / 阶段三个状态的推进、界面状态清空。
+    约定（作者 2026-09-25 定）：**一个回合 = 双方各行动一次**，不用"大回合"这个叫法。
+    所以 `/turn` 只在**守方交棒（一回合结束）**时 +1；攻方交棒时不动。
+
+    本服务只管这一局的事：混乱恢复、回合计数 / 控制方 / 阶段三个状态的推进、界面状态清空。
     "新控制方的单位要恢复行动力、刷新控制区标记、清掉已打过"属于通用回合骨架，
     由动作的第二步调 `pack_wargame_core:service:begin_side`（见 42_actions_turn.json）。
-    "大回合末判胜负"由命令的第二个动作调 `pack_wargame_core:service:check_victory`
-    （见 52_commands_turn.json 的分支："守方交棒 = 大回合末"）。
+    "回合末判胜负"由命令的第二个动作调 `pack_wargame_core:service:check_victory`
+    （见 52_commands_turn.json 的分支："守方交棒 = 一回合结束"）。
 
     混乱恢复（设计文档 §10.1 M-5）：**在该单位所属方的战斗阶段结束时**翻回来——
     "结束回合"正是该方攻击阶段的结束，所以恢复放在这里（在换控制方之前，恢复的是**本方**）。
@@ -40,8 +43,9 @@ def pass_control(api, args):
     defender_side = api.get("/defender_side")
     other = defender_side if current == attacker_side else attacker_side
     _recover_disordered(api, current)
-    turn = api.get("/turn")
-    api.emit("/turn", "modify", "number", value=turn + 1, old_value=turn)
+    if current == defender_side:          # 守方交棒 = 一个回合结束，回合数才 +1
+        turn = api.get("/turn")
+        api.emit("/turn", "modify", "number", value=turn + 1, old_value=turn)
     api.emit("/control_side", "modify", "string", value=other, old_value=current)
     _set_settling(api, False)
     api.emit("/stage", "modify", "string", value=STAGE_MOVE, old_value=api.get("/stage"))
