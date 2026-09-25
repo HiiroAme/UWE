@@ -360,6 +360,19 @@ class TestDemoRiverView(unittest.TestCase):
         lines = [layer for layer in view.layers if layer.id.startswith("modal:line:")]
         self.assertTrue(any(len(layer.text) > 30 for layer in lines))
 
+    def test_intro_modal_points_at_the_rulebook(self):
+        """弹窗标题下给出完整规则书的相对路径，而且那份文件真的在 Mod 文件夹里。"""
+        loaded = load_river()
+        view = self._view(loaded, loaded.initial_state, show_intro=True)
+        hint = self._layer(view, "modal:rule")
+        prefix, relative = hint.text.split("：", 1)
+        self.assertEqual(prefix, "完整规则书")
+        self.assertTrue(relative.startswith("mods/demo_river/"), relative)
+        self.assertTrue((REPO_ROOT / relative).is_file(), relative)
+        # 正文要给这一行让位：开头几行不与它重叠。
+        first_line = self._layer(view, "modal:line:0")
+        self.assertGreaterEqual(first_line.rect[1], hint.rect[1] + hint.rect[3])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -417,9 +417,20 @@ def _modal_layers(page_context, width, height):
               color=(0, 0, 0, 0), text_color=(255, 226, 150, 255), z=92, fixed=True),
     ]
     sections = tuple(intro.get("sections", ()))
+    # 完整规则书的相对路径（相对游戏本体所在的文件夹）：写在标题下面一行，
+    # 内容来自 setup/intro.json，脚本不写死任何路径。
+    rule_path = str(intro.get("rule_path", "")).strip()
+    hint_h = 20.0 if rule_path else 0.0
     content_px = max(40.0, panel_w - 60.0)
-    body_top = py + 52.0
-    body_h = max(40.0, panel_h - 52.0 - 60.0)
+    body_top = py + 52.0 + hint_h
+    body_h = max(40.0, panel_h - 52.0 - 60.0 - hint_h)
+    if rule_path:
+        layers.append(Layer(
+            id="modal:rule",
+            rect=(px + 20, py + 44, max(1.0, panel_w - 40), hint_h),
+            kind="text", text=f"完整规则书：{rule_path}", font_size=14, align="left",
+            color=(0, 0, 0, 0), text_color=(255, 226, 150, 255), z=92, fixed=True,
+        ))
 
     def build_lines(font_size):
         """按给定字号折行；段落之间留一个空行。"""

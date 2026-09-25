@@ -1,6 +1,7 @@
 {
   "title": "白鹭河遭遇战",
   "confirm": "进入战斗",
+  "rule_path": "mods/demo_river/规则.md",
   "sections": [
     {
       "heading": "背景",
