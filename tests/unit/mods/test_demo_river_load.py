@@ -4,13 +4,13 @@
 运行：在仓库根执行 `python run_tests.py`。
 
 覆盖（对应示例兵棋设计文档 §5 / §7 / §13）：
-  - 加载：700 格地图 → State（节点 / 相邻关系 / 渡口对 / 编成）；
+  - 加载：729 格地图（27×27 正方形）→ State（节点 / 相邻关系 / 渡口对 / 编成）；
   - 单位：10 北 + 8 南，摆在合法格子上，**不能堆叠**；
   - 相邻关系对称（A 连 B ⇒ B 连 A）；
   - 地形属性进了 State（河不可进入、村庄防守 ×2、胜利点标记）；
-  - 渡口成对：3 对 → 6 条双向通道，每对两岸隔一格河水；
+  - 渡口成对：2 对 → 4 条双向通道，每对两岸隔一格河水；
   - 这个 Mod **自己一个函数都不写**（玩法逻辑全在模块里）；
-  - 视图脚本能把整张地图画出来（层数 = 700 × 3 + HUD）。
+  - 视图脚本能把整张地图画出来（层数 = 729 × 3 + HUD）。
 """
 
 import unittest
@@ -39,16 +39,16 @@ def load_river():
 class TestDemoRiverLoad(unittest.TestCase):
     """加载结果与初始局面。"""
 
-    def test_builds_700_hex_state(self):
-        """地图 700 格 → 节点与相邻关系都在，回合 / 控制方 / 阶段有初值。"""
+    def test_builds_729_hex_state(self):
+        """地图 729 格 → 节点与相邻关系都在，回合 / 控制方 / 阶段有初值。"""
         state = load_river().initial_state
-        self.assertEqual(len(state["nodes"]), 700)
-        self.assertEqual(len(state["adjacency"]), 700)
+        self.assertEqual(len(state["nodes"]), 729)
+        self.assertEqual(len(state["adjacency"]), 729)
         self.assertEqual(state["control_side"], "north")
         self.assertEqual(state["stage"], "move")
         self.assertEqual(state["turn"], 1)
         self.assertFalse(state["game_over"])
-        self.assertEqual(state["map"]["cols"], 35)
+        self.assertEqual(state["map"]["cols"], 27)
 
     def test_units_are_placed_without_stacking(self):
         """18 个单位（北 10 / 南 8）都在地图上，而且没有两个挤在一格。"""
@@ -80,7 +80,7 @@ class TestDemoRiverLoad(unittest.TestCase):
         nodes = state["nodes"]
 
         river = [n for n in nodes.values() if n["terrain"] == "river"]
-        self.assertEqual(len(river), 37)
+        self.assertEqual(len(river), 52)
         self.assertFalse(river[0]["passable"])
 
         village = [n for n in nodes.values() if n["terrain"] == "village"]
@@ -89,17 +89,17 @@ class TestDemoRiverLoad(unittest.TestCase):
 
         victory = [n for n in nodes.values() if n.get("victory")]
         self.assertEqual(len(victory), 1)
-        self.assertEqual((victory[0]["row"], victory[0]["col"]), (19, 15))
+        self.assertEqual((victory[0]["row"], victory[0]["col"]), (26, 13))
 
         hill = [n for n in nodes.values() if n["terrain"] == "hill"]
         self.assertEqual(hill[0]["move_cost"], 2)
         self.assertEqual(hill[0]["defense_mult"], 2)
 
     def test_ford_crossings_are_paired_and_two_way(self):
-        """渡口：3 对 → 6 条双向通道，每条的"两地"中间隔着一格河水。"""
+        """渡口：2 对 → 4 条双向通道，每条的"两地"中间隔着一格河水。"""
         state = load_river().initial_state
         fords = state["fords"]
-        self.assertEqual(len(fords), 6)
+        self.assertEqual(len(fords), 4)
 
         by_node = {key: node for key, node in state["nodes"].items()}
         for crossing in fords:
@@ -137,10 +137,10 @@ class TestDemoRiverLoad(unittest.TestCase):
         hud = next(layer for layer in view.layers if layer.id == "hud")
         self.assertTrue(hud.fixed)                               # HUD 不跟视口动
         self.assertTrue(any(layer.kind == "polygon" for layer in view.layers))
-        # 裁剪：只画镜头内的格子，层的数量远小于"整图 700 × 3 + 1"。
+        # 裁剪：只画镜头内的格子，层的数量远小于"整图 729 × 3 + 1"。
         drawn = sum(1 for layer in view.layers if layer.kind == "polygon")
         self.assertGreater(drawn, 0)
-        self.assertLess(len(view.layers), 700 * 3 + 1)
+        self.assertLess(len(view.layers), 729 * 3 + 1)
 
     def test_camera_inputs_are_declared(self):
         """滚轮与拖动都登记过输入（外壳只会转发"Mod 声明过的"那两类事件）。"""

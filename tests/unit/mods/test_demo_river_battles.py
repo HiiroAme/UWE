@@ -267,7 +267,7 @@ class TestBattleDeclarations(unittest.TestCase):
         session = make_session()
         send(session, "declare_battle", {"units": ["north_10"], "target": "south_1"})
         target_before = dict(session.state["units"]["south_1"])
-        far = {(n["row"], n["col"]): k for k, n in session.state["nodes"].items()}[(1, 30)]
+        far = {(n["row"], n["col"]): k for k, n in session.state["nodes"].items()}[(1, 20)]
         session.state["units"]["south_1"]["at"] = far            # 目标被挪到北岸远端
         result = send(session, "resolve_next", {})
         self.assertTrue(result.committed)

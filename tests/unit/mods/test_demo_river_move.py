@@ -62,18 +62,18 @@ class TestMove(unittest.TestCase):
 
     def test_river_cannot_be_entered(self):
         """河流不可进入：站在河边也过不去。"""
-        self._place("north_1", 8, 6)                       # 河边（第 9 行是河）
-        result = self._send("move", {"unit": "north_1", "to": self.by_row_col[(9, 6)]})
+        self._place("north_1", 7, 6)                       # 河边（第 8 行是河）
+        result = self._send("move", {"unit": "north_1", "to": self.by_row_col[(8, 6)]})
         self.assertTrue(result.committed)                  # 命令本身不算被拒
-        self.assertEqual(self.session.state["units"]["north_1"]["at"], self.by_row_col[(8, 6)])
+        self.assertEqual(self.session.state["units"]["north_1"]["at"], self.by_row_col[(7, 6)])
 
     def test_ford_is_the_only_way_across(self):
         """渡口：站在北岸渡口，能花 3 点渡到南岸那格。"""
-        self._place("north_1", 8, 5)                       # 石桥渡北岸
-        result = self._send("move", {"unit": "north_1", "to": self.by_row_col[(10, 5)]})
+        self._place("north_1", 7, 4)                       # 西侧渡口·北岸
+        result = self._send("move", {"unit": "north_1", "to": self.by_row_col[(9, 4)]})
         self.assertTrue(result.committed)
         unit = self.session.state["units"]["north_1"]
-        self.assertEqual(unit["at"], self.by_row_col[(10, 5)])
+        self.assertEqual(unit["at"], self.by_row_col[(9, 4)])
         self.assertEqual(unit["move_left"], 6)                  # 9 - 3（渡河消耗）
 
     def test_can_pass_friend_but_not_stop_on_it(self):

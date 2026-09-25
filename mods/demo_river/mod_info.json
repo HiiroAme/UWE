@@ -3,7 +3,7 @@
   "name": "白鹭河遭遇战（示例兵棋）",
   "version": "0.0.0",
   "author": "引擎自带示例",
-  "description": "进阶示例：700 格六边形大地图、CRT 战斗结果表、控制区、渡河、混乱与战后挺进。它演示\"一个真实一点的兵棋怎么写\"，同时用来把引擎的系统性不足一条条找出来（设计与缺口清单见 plans/新架构细节/04_示例Mod/示例Mod.md）。",
+  "description": "进阶示例：729 格（27×27 正方形）六边形地图、西侧与中间两处渡口、CRT 战斗结果表、控制区、混乱与战后挺进。它演示\"一个真实一点的兵棋怎么写\"，同时用来把引擎的系统性不足一条条找出来（设计与缺口清单见 plans/新架构细节/04_示例Mod/示例Mod.md）。",
   "init": "scripts/init.py:build_state",
   "scenario": "demo_river_luochuan",
   "ui": "demo_river:ui:battle",

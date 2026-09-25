@@ -88,7 +88,7 @@ def build_state(mod):
         "intro_seen": False,
         "battles": [],
         "battle_report": {},
-        "log": ["开局：青隼战斗群在洛川平原北岸集结，柳浦守备队退守白鹭河南岸"],
+        "log": ["开局：青隼战斗群在洛川平原西北角集结，柳浦守备队分守渡口前哨与柳浦村"],
     }
 
 
